@@ -20,7 +20,7 @@ title                    : "alexandruhera.com"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Alexandru Hera"
-description              : "Work in progress..."
+description              : #"Work in progress..."
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -106,7 +106,7 @@ analytics:
 author:
   name             : "Alexandru Hera"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
+  bio              : "Senior SOC Analyst"
   location         : "Bucharest, Romania"
   email            :
   links:
@@ -124,7 +124,7 @@ author:
       # url: "https://facebook.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
+       url: "https://github.com/alexandruhera"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
