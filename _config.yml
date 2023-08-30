@@ -106,7 +106,7 @@ analytics:
 author:
   name             : "Alexandru Hera"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Senior SOC Analyst"
+  bio              : "Incident Handler with interests towards digital forensics, red teaming, and security engineering."
   location         : "Bucharest, Romania"
   email            :
   links:
