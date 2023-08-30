@@ -106,7 +106,7 @@ analytics:
 author:
   name             : "Alexandru Hera"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Incident Handler with interests towards digital forensics, red teaming, and security engineering."
+  bio              : "All things incident reponse. Interested in digital forensics, red teaming, and security engineering."
   location         : "Bucharest, Romania"
   email            :
   links:
@@ -119,9 +119,9 @@ author:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       # url: "https://twitter.com/"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url: "https://facebook.com/"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-link"
+      url: "https://www.linkedin.com/in/alexandruhera/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       # url: "https://github.com/alexandruhera"
