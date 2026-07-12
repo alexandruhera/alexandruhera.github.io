@@ -34,17 +34,17 @@ accounts and credentials. Work top to bottom; each step says who does it.
 
 ## 3. Cloudflare Pages project (~10 min)
 
-- [ ] **CLAUDE (or you):** `uvx wrangler pages project create alexandruhera-com
+- [ ] **CLAUDE (or you):** `npx wrangler pages project create alexandruhera-com
       --production-branch main` then push to main → CI deploys; verify
       `https://alexandruhera-com.pages.dev`
 - [ ] **YOU:** dashboard → Turnstile → Add widget (domains: alexandruhera.com,
       alexandruhera-com.pages.dev), Managed mode → copy the **sitekey** into
       `docs/contact.md` (replace the `1x00…AA` test key) and run:
-      `uvx wrangler pages secret put TURNSTILE_SECRET_KEY --project-name alexandruhera-com`
+      `npx wrangler pages secret put TURNSTILE_SECRET_KEY --project-name alexandruhera-com`
 - [ ] **YOU:** resend.com → free account → Domains → add `send.alexandruhera.com`
       → add the 3 DNS records it shows into Cloudflare DNS → verify → create
       **sending-only** API key → 
-      `uvx wrangler pages secret put RESEND_API_KEY --project-name alexandruhera-com`
+      `npx wrangler pages secret put RESEND_API_KEY --project-name alexandruhera-com`
 
 ## 4. Cutover (~15 min, after `dig NS alexandruhera.com` shows Cloudflare)
 
@@ -79,8 +79,8 @@ accounts and credentials. Work top to bottom; each step says who does it.
 ```bash
 # new post
 git switch -c post/my-topic
-$EDITOR docs/writing/posts/2026-08-01-my-topic.md   # front matter: title, date, description (+ draft: true while writing)
-uv run scripts/build.py --serve                      # local preview with drafts at :8000
+$EDITOR src/content/writing/my-topic.md   # front matter: title, date, description (+ draft: true while writing)
+npm run dev                      # local preview with drafts at :4321
 git push → open PR → CI comments preview URL → merge → live in ~2 min
 ```
 

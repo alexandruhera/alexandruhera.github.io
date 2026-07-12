@@ -1,0 +1,205 @@
+/* Design tokens — dark-first, kostas.page-inspired oklch system */
+
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+:root {
+  --bg: oklch(12% 0.02 260);
+  --bg-card: oklch(15% 0.02 260);
+  --bg-muted: oklch(20% 0.02 260);
+  --fg: oklch(90% 0.01 240);
+  --fg-muted: oklch(62% 0.02 240);
+  --border: oklch(26% 0.02 260);
+  --accent: oklch(68% 0.14 240);
+  --accent-strong: oklch(75% 0.15 240);
+  --radius: 0.25rem;
+  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: oklch(98% 0.002 240);
+  --bg-card: oklch(100% 0 0);
+  --bg-muted: oklch(95% 0.01 240);
+  --fg: oklch(20% 0.02 260);
+  --fg-muted: oklch(48% 0.02 260);
+  --border: oklch(88% 0.01 240);
+  --accent: oklch(45% 0.15 245);
+  --accent-strong: oklch(38% 0.15 245);
+  color-scheme: light;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+h1 { font-size: 2rem; margin: 0 0 1rem; }
+h2 { font-size: 1.3rem; margin: 2.2rem 0 0.8rem; }
+h3 { font-size: 1.05rem; margin: 1.6rem 0 0.5rem; }
+
+p, ul, ol { margin-bottom: 1rem; }
+ul, ol { padding-left: 1.4rem; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+code, pre, kbd {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+code {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.1em 0.35em;
+}
+
+pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+pre code { background: none; border: none; padding: 0; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+strong { color: var(--fg); }
+
+blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1rem;
+  color: var(--fg-muted);
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  background: var(--bg-card);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: oklch(10% 0.02 260);
+}
+
+:root[data-theme="light"] .btn-primary { color: oklch(98% 0 0); }
+
+.btn-primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: oklch(10% 0.02 260);
+}
+
+:root[data-theme="light"] .btn-primary:hover { color: oklch(98% 0 0); }
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.9rem;
+  margin: 1.6rem 0;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.25rem;
+  transition: border-color 0.15s;
+}
+
+.card:hover { border-color: var(--accent); }
+
+.card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.98rem;
+}
+
+.card h3 .prefix {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  margin-right: 0.4rem;
+}
+
+.card p {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+/* Mono label (section eyebrows, dates, tags) */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}

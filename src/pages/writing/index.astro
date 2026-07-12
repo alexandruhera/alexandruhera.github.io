@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+const posts = (
+  await getCollection("writing", ({ data }) => !data.draft || import.meta.env.DEV)
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base
+  title="Writing"
+  description="Articles on security operations, threat detection, incident response, and AI in the SOC."
+>
+  <h1>Writing</h1>
+  {posts.length === 0 && (
+    <p><em>Nothing published yet — first articles are on their way.</em></p>
+  )}
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li>
+          <span class="mono-label">
+            {post.data.date.toISOString().slice(0, 10)}
+          </span>
+          <a href={`/writing/${post.id}/`}>{post.data.title}</a>
+          <p>{post.data.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+
+  .post-list li {
+    border-top: 1px solid var(--border);
+    padding: 1.1rem 0;
+  }
+
+  .post-list a {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0.2rem 0;
+  }
+
+  .post-list p {
+    color: var(--fg-muted);
+    font-size: 0.88rem;
+    margin: 0;
+  }
+</style>

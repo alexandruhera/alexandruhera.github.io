@@ -1,11 +1,9 @@
 ---
-title: "Rebuilding this site: Zensical, Cloudflare Pages, and a paranoid pipeline"
+title: "Rebuilding this site: Astro, Cloudflare Pages, and a paranoid pipeline"
 date: 2026-07-12
-description: "Why I rebuilt my personal site on Zensical with a security-first deploy pipeline — CSP hashes, DNSSEC, and a contact form without third-party forms services."
+description: "Why I rebuilt my personal site with a security-first deploy pipeline — CSP hashes, DNSSEC, and a contact form without third-party forms services."
 draft: true
 ---
-
-# Rebuilding this site: Zensical, Cloudflare Pages, and a paranoid pipeline
 
 <!-- DRAFT — placeholder first post documenting the rebuild. Write or replace before launch. -->
 

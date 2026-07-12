@@ -1,4 +1,5 @@
 ---
+layout: ../layouts/Markdown.astro
 title: Resume
 description: Professional experience and certifications of Alexandru Hera.
 ---

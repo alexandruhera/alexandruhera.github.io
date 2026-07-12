@@ -1,0 +1,112 @@
+---
+import Base from "../layouts/Base.astro";
+
+// Cloudflare Turnstile sitekey. The value below is Cloudflare's public TEST
+// key (always passes). Replace with the real sitekey in SETUP.md step 3.
+const TURNSTILE_SITEKEY = "1x00000000000000000000AA";
+---
+
+<Base
+  title="Contact"
+  description="Get in touch with Alexandru Hera for consulting inquiries or anything else."
+>
+  <h1>Contact</h1>
+  <p>
+    Have a question, a consulting inquiry, or just want to talk security
+    operations? Send me a message — I read everything and reply to anything
+    serious.
+  </p>
+
+  <form class="contact-form" method="POST" action="/api/contact">
+    <label for="cf-name">Name</label>
+    <input id="cf-name" name="name" type="text" maxlength="200" required />
+
+    <label for="cf-email">Email</label>
+    <input id="cf-email" name="email" type="email" maxlength="254" required />
+
+    <label for="cf-message">Message</label>
+    <textarea
+      id="cf-message"
+      name="message"
+      rows="8"
+      maxlength="5000"
+      required></textarea>
+
+    <div class="cf-website-field" aria-hidden="true">
+      <label for="cf-website">Website</label>
+      <input
+        id="cf-website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="cf-turnstile" data-sitekey={TURNSTILE_SITEKEY}></div>
+
+    <button type="submit" class="btn btn-primary">Send message</button>
+  </form>
+
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer></script>
+
+  <p>
+    If you prefer email:
+    <a href="mailto:alex@alexandruhera.com">alex@alexandruhera.com</a>
+  </p>
+</Base>
+
+<style>
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-width: 32rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .contact-form label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-muted);
+    margin-top: 0.7rem;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    font: inherit;
+    color: var(--fg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.55rem 0.65rem;
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .contact-form button {
+    margin-top: 1rem;
+    align-self: flex-start;
+    cursor: pointer;
+  }
+
+  .cf-turnstile {
+    margin-top: 0.8rem;
+  }
+
+  .cf-website-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>

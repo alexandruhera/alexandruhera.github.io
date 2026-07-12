@@ -1,4 +1,5 @@
 ---
+layout: ../layouts/Markdown.astro
 title: About
 description: About Alexandru Hera — SOC manager, incident responder, and forensic analyst based in Bucharest.
 ---
@@ -24,5 +25,5 @@ judgment calls.
 - [GitHub](https://github.com/alexandruhera)
 - [LinkedIn](https://www.linkedin.com/in/alexandruhera)
 
-For consulting inquiries, see [Services](services.md) or just
-[get in touch](contact.md).
+For consulting inquiries, see [Services](/services/) or just
+[get in touch](/contact/).

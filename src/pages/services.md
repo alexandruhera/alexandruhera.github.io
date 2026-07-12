@@ -1,4 +1,5 @@
 ---
+layout: ../layouts/Markdown.astro
 title: Services
 description: Security operations consulting — SOC advisory, detection engineering, incident readiness, and security automation.
 ---
@@ -36,5 +37,5 @@ reporting — including pragmatic use of AI agents where they genuinely help.
 
 ---
 
-**Interested?** [Get in touch](contact.md) with a short description of your
+**Interested?** [Get in touch](/contact/) with a short description of your
 situation, and I'll tell you honestly whether I can help.
