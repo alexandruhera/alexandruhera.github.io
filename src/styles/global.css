@@ -42,8 +42,12 @@ html {
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--fg);
-  font-size: 16px;
+  font-size: 18px;
   scroll-behavior: smooth;
+}
+
+@media (max-width: 40rem) {
+  html { font-size: 17px; }
 }
 
 body {
@@ -68,9 +72,9 @@ h1, h2, h3 {
   font-weight: 700;
 }
 
-h1 { font-size: 2rem; margin: 0 0 1rem; }
-h2 { font-size: 1.3rem; margin: 2.2rem 0 0.8rem; }
-h3 { font-size: 1.05rem; margin: 1.6rem 0 0.5rem; }
+h1 { font-size: 2.1rem; margin: 0 0 1rem; }
+h2 { font-size: 1.35rem; margin: 2.2rem 0 0.8rem; }
+h3 { font-size: 1.1rem; margin: 1.6rem 0 0.5rem; }
 
 p, ul, ol { margin-bottom: 1rem; }
 ul, ol { padding-left: 1.4rem; }
@@ -180,7 +184,7 @@ blockquote {
 
 .card h3 {
   margin: 0 0 0.4rem;
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 
 .card h3 .prefix {
@@ -190,7 +194,7 @@ blockquote {
 }
 
 .card p {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--fg-muted);
   margin: 0;
 }
@@ -198,8 +202,8 @@ blockquote {
 /* Mono label (section eyebrows, dates, tags) */
 .mono-label {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--fg-muted);
 }

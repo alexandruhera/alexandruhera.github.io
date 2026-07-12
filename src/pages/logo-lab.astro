@@ -1,0 +1,180 @@
+---
+// SCRATCH PAGE — logo exploration. Not linked from nav.
+// DELETE before launch (or keep as an easter egg — but unlist in sitemap).
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Logo lab" description="Personal logo exploration — scratch page.">
+  <h1>Logo lab</h1>
+  <p class="mono-label">six vector concepts · each shown at hero / nav / favicon size</p>
+
+  <!-- 1. Bracket monogram -->
+  <section class="variant">
+    <h2>1 — Bracket monogram <code>[ah]</code></h2>
+    <p class="note">Terminal array/index flavor. Brackets in accent, letters spaced.</p>
+    <div class="stage">
+      <svg class="hero-size" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" aria-label="[ah] logo">
+        <text x="4" y="29" class="svg-mono accent" font-size="28">[</text>
+        <text x="22" y="29" class="svg-mono fg" font-size="24" letter-spacing="6">ah</text>
+        <text x="66" y="29" class="svg-mono accent" font-size="28">]</text>
+      </svg>
+      <span class="nav-demo"><span class="accent">[</span>a h<span class="accent">]</span></span>
+      <svg class="fav-size" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="4" class="fav-bg"/>
+        <text x="16" y="22" text-anchor="middle" class="svg-mono accent" font-size="16">[a]</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 2. Shell prompt -->
+  <section class="variant">
+    <h2>2 — Prompt <code>❯ ah▮</code></h2>
+    <p class="note">Shell prompt with blinking cursor. Unmistakably ops.</p>
+    <div class="stage">
+      <div class="hero-size prompt-demo">
+        <span class="accent">❯</span> a h<span class="cursor">▮</span>
+      </div>
+      <span class="nav-demo"><span class="accent">❯</span> ah<span class="cursor">▮</span></span>
+      <svg class="fav-size" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="4" class="fav-bg"/>
+        <text x="6" y="23" class="svg-mono accent" font-size="18">❯</text>
+        <rect x="18" y="10" width="7" height="14" class="fav-accent-rect"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 3. Spaced wordmark -->
+  <section class="variant">
+    <h2>3 — Spaced wordmark</h2>
+    <p class="note">Maximum letter-spacing, light weight. Quiet and editorial.</p>
+    <div class="stage stage-column">
+      <div class="wordmark">ALEXANDRU&ensp;HERA</div>
+      <span class="nav-demo wordmark-nav">A&hairsp;H&hairsp;E&hairsp;R&hairsp;A</span>
+    </div>
+  </section>
+
+  <!-- 4. Hex mark -->
+  <section class="variant">
+    <h2>4 — Hex monogram</h2>
+    <p class="note">Pure geometry: hexagon (hex/infra connotation) + spaced AH.</p>
+    <div class="stage">
+      <svg class="hero-size" viewBox="0 0 44 48" xmlns="http://www.w3.org/2000/svg" aria-label="AH hexagon logo">
+        <path d="M22 2 L41 13 L41 35 L22 46 L3 35 L3 13 Z" fill="none" class="stroke-accent" stroke-width="2.5"/>
+        <text x="22" y="30" text-anchor="middle" class="svg-mono fg" font-size="14" letter-spacing="3">AH</text>
+      </svg>
+      <span class="nav-demo">
+        <svg width="20" height="22" viewBox="0 0 44 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 2 L41 13 L41 35 L22 46 L3 35 L3 13 Z" fill="none" class="stroke-accent" stroke-width="3"/>
+        </svg>
+        alexandru<span class="accent">hera</span>
+      </span>
+      <svg class="fav-size" viewBox="0 0 44 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 2 L41 13 L41 35 L22 46 L3 35 L3 13 Z" fill="none" class="stroke-accent" stroke-width="4"/>
+        <text x="22" y="31" text-anchor="middle" class="svg-mono fg" font-size="15">A</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 5. Slash -->
+  <section class="variant">
+    <h2>5 — Slash <code>a/h</code></h2>
+    <p class="note">Path separator. Minimal, types fast, scales anywhere.</p>
+    <div class="stage">
+      <svg class="hero-size" viewBox="0 0 90 40" xmlns="http://www.w3.org/2000/svg" aria-label="a/h logo">
+        <text x="6" y="29" class="svg-mono fg" font-size="26" letter-spacing="2">a</text>
+        <line x1="36" y1="34" x2="52" y2="6" class="stroke-accent" stroke-width="3"/>
+        <text x="58" y="29" class="svg-mono fg" font-size="26" letter-spacing="2">h</text>
+      </svg>
+      <span class="nav-demo">a<span class="accent">/</span>h</span>
+      <svg class="fav-size" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="4" class="fav-bg"/>
+        <line x1="12" y1="26" x2="20" y2="6" class="stroke-accent" stroke-width="3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 6. Underscore handle -->
+  <section class="variant">
+    <h2>6 — Handle <code>alexandru_hera</code></h2>
+    <p class="note">Variable-name aesthetic; underscore in accent, wide tracking.</p>
+    <div class="stage">
+      <div class="hero-size handle-demo">alexandru<span class="accent">_</span>hera</div>
+      <span class="nav-demo">a<span class="accent">_</span>h</span>
+      <svg class="fav-size" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="4" class="fav-bg"/>
+        <text x="16" y="20" text-anchor="middle" class="svg-mono fg" font-size="13" letter-spacing="1">ah</text>
+        <rect x="8" y="24" width="16" height="2.5" class="fav-accent-rect"/>
+      </svg>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .variant {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 0 2rem;
+  }
+
+  .note {
+    color: var(--fg-muted);
+    font-size: 0.85rem;
+  }
+
+  .stage {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .stage-column { align-items: flex-start; flex-direction: column; gap: 1.2rem; }
+
+  .hero-size { height: 3rem; }
+  .fav-size { height: 1.5rem; }
+
+  .svg-mono { font-family: var(--font-mono); }
+  .fg { fill: var(--fg); }
+  .accent { color: var(--accent); }
+  svg .accent { fill: var(--accent); }
+  .stroke-accent { stroke: var(--accent); }
+  .fav-bg { fill: var(--bg-muted); }
+  .fav-accent-rect { fill: var(--accent); }
+
+  .nav-demo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .prompt-demo, .handle-demo {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .wordmark {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 1.7rem;
+    letter-spacing: 0.42em;
+    color: var(--fg);
+  }
+
+  .wordmark-nav { font-weight: 400; letter-spacing: 0.25em; }
+
+  .cursor {
+    color: var(--accent);
+    animation: blink 1.1s steps(1) infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
