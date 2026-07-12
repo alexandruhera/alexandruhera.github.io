@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {% if page.meta and page.meta.title %}
+    {% set page_title = page.meta.title %}
+  {% elif page.title %}
+    {% set page_title = page.title %}
+  {% else %}
+    {% set page_title = config.site_name %}
+  {% endif %}
+  {% if page.meta and page.meta.description %}
+    {% set page_desc = page.meta.description %}
+  {% else %}
+    {% set page_desc = config.site_description %}
+  {% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ page_desc }}">
+  {% if page.canonical_url %}
+    <meta property="og:url" content="{{ page.canonical_url }}">
+  {% endif %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:description" content="{{ page_desc }}">
+  <link rel="alternate" type="application/rss+xml" title="Alexandru Hera — Writing"
+    href="{{ config.site_url }}feed.xml">
+{% endblock %}

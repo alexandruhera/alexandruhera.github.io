@@ -1,0 +1,13 @@
+# Build output
+site/
+
+# Generated content (scripts/generate_blog.py)
+docs/writing/index.md
+docs/feed.xml
+
+# Python
+__pycache__/
+.venv/
+
+# OS / editor
+.DS_Store

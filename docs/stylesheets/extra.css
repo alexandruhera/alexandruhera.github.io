@@ -1,0 +1,67 @@
+/* System font stack (theme font = false disables Google Fonts) */
+:root {
+  --md-text-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --md-code-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+/* Brand color: deep teal, readable in both schemes */
+:root {
+  --md-primary-fg-color: #0d5c63;
+  --md-primary-fg-color--light: #1a7f88;
+  --md-primary-fg-color--dark: #083f44;
+  --md-accent-fg-color: #1a7f88;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1a7f88;
+  --md-accent-fg-color: #35b5bf;
+}
+
+/* Contact form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 34rem;
+}
+
+.contact-form label {
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  font: inherit;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.2rem;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 1px;
+}
+
+.contact-form button {
+  margin-top: 1rem;
+  align-self: flex-start;
+}
+
+.contact-form .cf-turnstile {
+  margin-top: 0.8rem;
+}
+
+/* Honeypot: visually removed, still in DOM for bots */
+.contact-form .cf-website-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

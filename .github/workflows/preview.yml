@@ -1,0 +1,59 @@
+name: Preview
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Preview deploy and link check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          enable-cache: true
+
+      - name: Build site
+        run: |
+          uv sync --frozen
+          uv run scripts/build.py
+
+      - name: Link check (internal)
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --offline
+            --include-fragments
+            --root-dir ${{ github.workspace }}/site
+            site
+          fail: true
+
+      - name: Deploy preview to Cloudflare Pages
+        id: preview
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=alexandruhera-com --branch=pr-${{ github.event.number }}
+
+      - name: Comment preview URL on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.preview.outputs.deployment-url }}
+          ALIAS: ${{ steps.preview.outputs.pages-deployment-alias-url }}
+        run: |
+          gh pr comment "${{ github.event.number }}" \
+            --repo "${{ github.repository }}" \
+            --edit-last --create-if-none \
+            --body "**Preview:** ${ALIAS:-$URL}"
