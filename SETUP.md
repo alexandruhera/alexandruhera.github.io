@@ -39,7 +39,7 @@ accounts and credentials. Work top to bottom; each step says who does it.
       `https://alexandruhera-com.pages.dev`
 - [ ] **YOU:** dashboard → Turnstile → Add widget (domains: alexandruhera.com,
       alexandruhera-com.pages.dev), Managed mode → copy the **sitekey** into
-      `docs/contact.md` (replace the `1x00…AA` test key) and run:
+      `src/pages/contact.astro` (replace the `1x00…AA` test key) and run:
       `npx wrangler pages secret put TURNSTILE_SECRET_KEY --project-name alexandruhera-com`
 - [ ] **YOU:** resend.com → free account → Domains → add `send.alexandruhera.com`
       → add the 3 DNS records it shows into Cloudflare DNS → verify → create
@@ -84,6 +84,5 @@ npm run dev                      # local preview with drafts at :4321
 git push → open PR → CI comments preview URL → merge → live in ~2 min
 ```
 
-Zensical is alpha: upgrades arrive as Dependabot PRs — check the preview URL
-before merging. If a release breaks things, the config is Material-shaped, so
-falling back to Material for MkDocs is a contained change.
+Dependency upgrades (Astro included) arrive as weekly Dependabot PRs — check
+the preview URL before merging.
