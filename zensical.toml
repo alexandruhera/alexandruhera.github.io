@@ -66,6 +66,12 @@ permalink = true
 [project.markdown_extensions.pymdownx.betterem]
 [project.markdown_extensions.pymdownx.caret]
 [project.markdown_extensions.pymdownx.details]
+# NOTE: :material-*: icons inline as local SVG. Do NOT use unicode emoji
+# shortcodes (e.g. :rocket:) — those fetch twemoji SVGs from jsdelivr and
+# would violate the CSP / zero-external-requests policy.
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
 [project.markdown_extensions.pymdownx.highlight]
 anchor_linenums = true
 line_spans = "__span"
