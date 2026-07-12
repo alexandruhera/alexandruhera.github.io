@@ -1,0 +1,14 @@
+<!-- Signal mark, v3 backup (2026-07-12).
+     Structure strokes use currentColor; accent = #4E9CD5
+     (site token --accent: oklch(68% 0.14 240) dark scheme). -->
+<svg viewBox="0 0 52 56" xmlns="http://www.w3.org/2000/svg" aria-label="Signal mark">
+  <g fill="none" stroke-linecap="round">
+    <path d="M26 4 L45.9 15.5 L45.9 38.5 L26 50 L6.1 38.5 L6.1 21" stroke="currentColor" stroke-width="2.2"/>
+    <path d="M6.1 15.5 L26 4" stroke="#4E9CD5" stroke-width="2.2"/>
+    <path d="M26 27 L26 12 M26 27 L38 34 M26 27 L14.5 33.5" stroke="currentColor" stroke-width="1.1" opacity="0.5"/>
+  </g>
+  <circle cx="26" cy="27" r="3.2" fill="#4E9CD5"/>
+  <circle cx="26" cy="12" r="1.7" fill="currentColor"/>
+  <circle cx="38" cy="34" r="1.7" fill="currentColor"/>
+  <circle cx="14.5" cy="33.5" r="1.7" fill="currentColor" opacity="0.6"/>
+</svg>
