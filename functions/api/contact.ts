@@ -19,7 +19,7 @@ interface Env {
 }
 
 const LIMITS = { name: 200, email: 254, subject: 200, message: 5000 } as const;
-const TO_ADDRESS = "alex@alexandruhera.com";
+const TO_ADDRESS = "contact@alexandruhera.com";
 const FROM_ADDRESS = "Website contact form <form@send.alexandruhera.com>";
 
 function fail(status: number, message: string): Response {
