@@ -21,3 +21,8 @@ src/pages/lab/
 
 # Wrangler local state
 .wrangler/
+
+# Internal planning docs — local-only, not for the public repo
+SETUP.md
+DEVPLAN.md
+docs-internal/
