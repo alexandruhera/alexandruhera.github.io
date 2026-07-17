@@ -41,6 +41,7 @@ jobs:
             --offline
             --include-fragments
             --root-dir ${{ github.workspace }}/dist
+            --exclude 'api/contact$'
             dist
           fail: true
 
