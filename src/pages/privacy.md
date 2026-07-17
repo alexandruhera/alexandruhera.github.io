@@ -23,32 +23,26 @@ trackers, no marketing cookies.
 - Your theme preference (light/dark) is stored in your browser's local
   storage only. It never leaves your device and identifies nothing.
 
-## The contact form
+## Email
 
-If you use the [contact form](/contact/), I receive the data you submit —
-your name, email address, subject, and message. I use it for one purpose:
-reading and answering your message. The legal basis is legitimate interest
-(responding to correspondence you initiated, GDPR Art. 6(1)(f)).
+The only personal data I receive is what you choose to send me. If you email
+[contact@alexandruhera.com](mailto:contact@alexandruhera.com), I get your
+email address and your message, and I use them for one purpose: reading and
+answering you (legitimate interest, GDPR Art. 6(1)(f)). I keep
+correspondence for as long as needed to handle it, and delete it when it no
+longer serves a purpose.
 
-Two service providers process this data on my behalf:
-
-- **Cloudflare** — hosts this site and runs the form handler. Cloudflare
-  Turnstile protects the form against bots; it is designed to work without
-  tracking cookies. Like any host, Cloudflare keeps standard server logs
-  (including IP addresses) for security and operations.
-- **Resend** — delivers the form submission to my inbox as an email.
-
-I keep correspondence for as long as needed to handle it, and delete it when
-it no longer serves a purpose.
+The site is hosted on GitHub Pages; like any host, GitHub keeps standard
+server logs (including IP addresses) for security and operations.
 
 ## Your rights
 
 Under the GDPR you can request access to, correction of, or deletion of your
 personal data, object to or ask for restriction of its processing, and
-request a copy in a portable format. To exercise any of these, reach out via
-the [contact form](/contact/). You also have the right to lodge a complaint
-with a supervisory authority — in Romania, that is the ANSPDCP
-(dataprotection.ro).
+request a copy in a portable format. To exercise any of these, email
+[contact@alexandruhera.com](mailto:contact@alexandruhera.com). You also have
+the right to lodge a complaint with a supervisory authority — in Romania,
+that is the ANSPDCP (dataprotection.ro).
 
 ## Changes
 
