@@ -7,16 +7,18 @@ Launch is two-phase: **V1 goes live now on GitHub Pages** (DNS already points
 there from the old site, so no DNS work), **V2 moves hosting to Cloudflare**
 (contact form backend, security headers, previews) on its own timeline.
 
-## V1. Go live on GitHub Pages (~15 min)
+## V1. Go live on GitHub Pages — DONE 2026-07-17
 
-- [ ] **YOU:** `gh auth login` (GitHub.com, HTTPS, browser; scopes: repo + workflow)
-- [ ] **CLAUDE (after auth):** create the repo (public — free GitHub Pages
-      requires it; `src/pages/lab/` and `/lab/` are gitignored so no PII
-      ships), push main, enable Pages with source "GitHub Actions", enable
-      branch protection, secret scanning, Dependabot
-- [ ] **CLAUDE:** move the `alexandruhera.com` custom domain off the old
-      Pages repo onto the new one (+ `www`), enforce HTTPS, then verify the
-      live site: pages render, feed.xml, sitemap, 404, blog slugs
+- [x] **YOU:** `gh auth login` (GitHub.com, HTTPS, browser; scopes: repo + workflow)
+- [x] **CLAUDE:** pushed into the EXISTING `alexandruhera.github.io` repo
+      instead of creating a new one — the custom domain, verified-domain
+      status, and HTTPS cert (apex + www) carried over untouched, so cutover
+      was zero-downtime. Old site preserved on the `legacy-site` branch.
+      (`src/pages/lab/` and `/lab/` are gitignored so no PII shipped.)
+- [x] **CLAUDE:** verified live: all pages 200, www→apex 301, feed.xml,
+      sitemap, 404, /lab/* absent, contact shows the mailto card
+- [x] **CLAUDE:** branch protection, secret scanning + push protection,
+      Dependabot security updates
 - [ ] **YOU (optional):** change git identity if you prefer the GitHub noreply
       address: `git config user.email "<id>+alexandruhera@users.noreply.github.com"`
 
