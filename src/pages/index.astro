@@ -1,10 +1,16 @@
 ---
 import Base from "../layouts/Base.astro";
+import Terminal from "../components/Terminal.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("writing", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 ---
 
 <Base title="Alexandru Hera">
   <section class="hero">
-    <p class="mono-label">// security operations &amp; threat detection</p>
+    <p class="eyebrow">home</p>
     <h1>Security operations, <span class="accent">done properly</span>.</h1>
     <p class="lead">
       I lead Security Operations Centers for a living — building detection,
@@ -13,43 +19,37 @@ import Base from "../layouts/Base.astro";
       security operations.
     </p>
     <div class="cta">
-      <a class="btn btn-primary" href="/writing/">Read my writing</a>
+      <a class="btn btn-primary" href="/blog/">Read the blog</a>
       <a class="btn" href="/services/">Work with me</a>
     </div>
   </section>
 
-  <div class="card-grid">
-    <div class="card">
-      <h3><span class="prefix">01</span>SOC leadership</h3>
-      <p>
-        Strategy, operations, quality assurance, and team development for
-        managed and internal security operations.
-      </p>
-    </div>
-    <div class="card">
-      <h3><span class="prefix">02</span>Detection &amp; response</h3>
-      <p>
-        Threat detection engineering, incident response, and digital forensics
-        across endpoint, cloud, and identity.
-      </p>
-    </div>
-    <div class="card">
-      <h3><span class="prefix">03</span>Security automation</h3>
-      <p>
-        Response workflows, playbooks, and AI-assisted operations that make
-        small teams punch above their weight.
-      </p>
-    </div>
-  </div>
+  <Terminal />
 
-  <p class="mono-label credentials">
-    GSOM · GCFA · GCFR · GRTP · GIAC advisory board
-  </p>
+  {
+    posts.length > 0 && (
+      <section class="latest">
+        <p class="eyebrow">from the blog</p>
+        <ul class="post-list">
+          {posts.map((post) => (
+            <li>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              <span class="mono-label">
+                {post.data.date.toISOString().slice(0, 10)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </Base>
 
 <style>
+  /* no top padding — the eyebrow lines up with every other page's header
+     (main already supplies the top offset) */
   .hero {
-    padding: 3rem 0 1.5rem;
+    padding: 0 0 1.5rem;
   }
 
   .hero h1 {
@@ -74,8 +74,31 @@ import Base from "../layouts/Base.astro";
     flex-wrap: wrap;
   }
 
-  .credentials {
-    display: block;
-    margin-top: 2rem;
+  .latest {
+    margin-top: 2.5rem;
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 0;
+  }
+
+  .post-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-list a {
+    color: var(--fg);
+  }
+
+  .post-list a:hover {
+    color: var(--accent);
+    text-decoration: none;
   }
 </style>

@@ -1,0 +1,106 @@
+---
+// SOC terminal vignette (DEVPLAN B5) — CSS-only typed detection story.
+// Lines type sequentially via steps(); prefers-reduced-motion shows the
+// final frame statically. No client JS.
+---
+
+<div class="term" role="img" aria-label="Terminal: a malicious process is detected and contained">
+  <div class="term-bar">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="term-title">soc — triage</span>
+  </div>
+  <pre class="term-body"><code
+    ><span class="ln t1">$ whoami</span
+    ><span class="ln t2">alexandru.hera — soc lead / dfir</span
+    ><span class="ln t3">$ tail -f alerts.log</span
+    ><span class="ln t4 alert">[!] winword.exe → powershell.exe -enc JABz…</span
+    ><span class="ln t5 dim">    sigma: proc_creation_office_spawn_shell</span
+    ><span class="ln t6 ok">[✓] host isolated · contained · mttr 14m</span
+    ><span class="caret" aria-hidden="true"></span
+  ></code></pre>
+</div>
+
+<style>
+  .term {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 2rem 0 0.5rem;
+    overflow: hidden;
+  }
+
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+  }
+
+  .term-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--fg-muted);
+    margin-left: 0.4rem;
+  }
+
+  .term-body {
+    margin: 0;
+    border: none;
+    background: none;
+    padding: 0.9rem 1rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.7;
+  }
+
+  .ln {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+  }
+
+  .alert { color: var(--accent-brand); }
+  .dim { color: var(--fg-muted); }
+  .ok { color: var(--ok); }
+
+  .t1 { animation: type 0.5s steps(8, end) 0.4s both; }
+  .t2 { animation: type 0.9s steps(32, end) 1.1s both; }
+  .t3 { animation: type 0.7s steps(20, end) 2.4s both; }
+  .t4 { animation: type 1.1s steps(44, end) 3.4s both; }
+  .t5 { animation: type 0.9s steps(43, end) 4.7s both; }
+  .t6 { animation: type 1s steps(41, end) 6s both; }
+
+  @keyframes type {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  .caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--fg-muted);
+    vertical-align: text-bottom;
+    animation: blink 1.1s step-end 7s infinite;
+    opacity: 0;
+  }
+
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ln { animation: none; width: 100%; }
+    .caret { animation: none; opacity: 0.6; }
+  }
+</style>

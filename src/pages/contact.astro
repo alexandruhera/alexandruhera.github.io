@@ -1,106 +1,256 @@
 ---
 import Base from "../layouts/Base.astro";
+import { Icon } from "astro-icon/components";
 
 // Cloudflare Turnstile sitekey. The value below is Cloudflare's public TEST
-// key (always passes). Replace with the real sitekey in SETUP.md step 3.
+// key (always passes + shows a "for testing only" banner). Replace with the
+// real sitekey in SETUP.md step 3 — the widget only renders once a real key
+// is set, so the placeholder banner never ships to visitors.
 const TURNSTILE_SITEKEY = "1x00000000000000000000AA";
+const turnstileEnabled = TURNSTILE_SITEKEY !== "1x00000000000000000000AA";
+
+// V1 hosting (GitHub Pages) has no Pages Functions, so /api/contact does not
+// exist there — the deploy workflow sets PUBLIC_DEPLOY_TARGET=gh-pages and we
+// render a mailto card instead of the form. Cloudflare builds get the form.
+const staticHost = import.meta.env.PUBLIC_DEPLOY_TARGET === "gh-pages";
+const CONTACT_EMAIL = "alex@alexandruhera.com";
 ---
 
 <Base
   title="Contact"
   description="Get in touch with Alexandru Hera for consulting inquiries or anything else."
 >
-  <h1>Contact</h1>
-  <p>
-    Have a question, a consulting inquiry, or just want to talk security
-    operations? Send me a message — I read everything and reply to anything
-    serious.
-  </p>
+  <div class="contact-layout">
+    <div class="contact-intro">
+      <p class="eyebrow">contact</p>
+      <h1>Get in touch</h1>
+      <p class="intro">
+        Have a question, a consulting inquiry, or just want to talk security
+        operations? {staticHost ? "Email is the quickest way to reach me." : "The form is the quickest way to reach me."}
+      </p>
 
-  <form class="contact-form" method="POST" action="/api/contact">
-    <label for="cf-name">Name</label>
-    <input id="cf-name" name="name" type="text" maxlength="200" required />
-
-    <label for="cf-email">Email</label>
-    <input id="cf-email" name="email" type="email" maxlength="254" required />
-
-    <label for="cf-message">Message</label>
-    <textarea
-      id="cf-message"
-      name="message"
-      rows="8"
-      maxlength="5000"
-      required></textarea>
-
-    <div class="cf-website-field" aria-hidden="true">
-      <label for="cf-website">Website</label>
-      <input
-        id="cf-website"
-        name="website"
-        type="text"
-        tabindex="-1"
-        autocomplete="off"
-      />
+      <div class="c-block">
+        <span class="c-icon"><Icon name="lucide:map-pin" /></span>
+        <div>
+          <p class="c-head">Location</p>
+          <p>Bucharest, Romania</p>
+          <p class="c-sub">Remote engagements across EU time zones.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="cf-turnstile" data-sitekey={TURNSTILE_SITEKEY}></div>
+    {staticHost ? (
+      <div class="contact-form">
+        <div class="form-head">
+          <h2>Send a message</h2>
+          <p>Drop me an email — I read everything and reply within a day or two.</p>
+        </div>
+        <a class="btn btn-primary send" href={`mailto:${CONTACT_EMAIL}`}>
+          <Icon name="lucide:mail" /> {CONTACT_EMAIL}
+        </a>
+      </div>
+    ) : (
+    <form class="contact-form" method="POST" action="/api/contact">
+      <div class="form-head">
+        <h2>Send a message</h2>
+        <p>All fields marked are required. I'll take it from there.</p>
+      </div>
 
-    <button type="submit" class="btn btn-primary">Send message</button>
-  </form>
+      <div class="form-row">
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" maxlength="200" required />
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" maxlength="254" required />
+        </div>
+      </div>
 
-  <script
-    is:inline
-    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-    async
-    defer></script>
+      <div class="field">
+        <label for="cf-subject">Subject</label>
+        <input id="cf-subject" name="subject" type="text" maxlength="200" />
+      </div>
 
-  <p>
-    If you prefer email:
-    <a href="mailto:alex@alexandruhera.com">alex@alexandruhera.com</a>
-  </p>
+      <div class="field">
+        <label for="cf-message">Message</label>
+        <textarea
+          id="cf-message"
+          name="message"
+          rows="4"
+          maxlength="5000"
+          required></textarea>
+      </div>
+
+      <div class="cf-website-field" aria-hidden="true">
+        <label for="cf-website">Website</label>
+        <input
+          id="cf-website"
+          name="website"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- when the widget is disabled there is no token; Turnstile's TEST
+           secret (local wrangler) accepts any non-empty token, so supply one.
+           A real production secret rejects it, which is correct: it would
+           mean the widget is misconfigured. -->
+      {turnstileEnabled ? (
+        <div class="cf-turnstile" data-sitekey={TURNSTILE_SITEKEY}></div>
+      ) : (
+        <input
+          type="hidden"
+          name="cf-turnstile-response"
+          value="local-dev-no-widget"
+        />
+      )}
+
+      <button type="submit" class="btn btn-primary send">
+        <Icon name="lucide:send" /> Send message
+      </button>
+    </form>
+    )}
+  </div>
+
+  {
+    !staticHost && turnstileEnabled && (
+      <script
+        is:inline
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
+    )
+  }
 </Base>
 
 <style>
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 44rem) {
+    .contact-layout { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  .intro {
+    color: var(--fg-muted);
+    margin-bottom: 2rem;
+  }
+
+  /* left column: location block */
+  .c-block {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
+  }
+
+  .c-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--accent);
+  }
+
+  .c-icon :global(svg) { width: 1.05em; height: 1.05em; }
+
+  .c-head {
+    font-family: var(--font-mono);
+    font-size: var(--fs-ui);
+    color: var(--fg);
+    margin: 0.15rem 0 0.25rem;
+  }
+
+  .c-block p { margin: 0; }
+  .c-sub { font-size: 0.85rem; color: var(--fg-muted); margin-top: 0.15rem; }
+
+  /* right column: form as a bordered card (kostas-style panel) */
   .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    max-width: 32rem;
-    margin: 1.5rem 0 2rem;
+    gap: 0.85rem;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .form-head h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .form-head p {
+    margin: 0.3rem 0 0;
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 30rem) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   .contact-form label {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: var(--fs-label);
     color: var(--fg-muted);
-    margin-top: 0.7rem;
   }
 
   .contact-form input,
   .contact-form textarea {
-    font: inherit;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
     color: var(--fg);
-    background: var(--bg-card);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 0.55rem 0.65rem;
+    padding: 0.45rem 0.6rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .contact-form textarea {
+    resize: vertical;
+    min-height: 4rem;
   }
 
   .contact-form input:focus,
   .contact-form textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
+    outline: none;
+    border-color: var(--accent);
   }
 
-  .contact-form button {
-    margin-top: 1rem;
-    align-self: flex-start;
+  .send {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    width: 100%;
     cursor: pointer;
   }
 
-  .cf-turnstile {
-    margin-top: 0.8rem;
-  }
+  .send :global(svg) { width: 1em; height: 1em; }
 
   .cf-website-field {
     position: absolute;

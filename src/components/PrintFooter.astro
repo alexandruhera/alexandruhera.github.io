@@ -1,0 +1,79 @@
+---
+// Print-only running footer (resume). Placed in the resume's print <tfoot>, so
+// it repeats at the bottom of every page. Slim to match the header: a thin brand
+// rule over a centered contact line, hexagon-separated. Items with an href
+// render as (clickable) links showing a friendly label.
+interface Props {
+  items: { label: string; href?: string }[];
+}
+const { items } = Astro.props;
+const HEX = "M26 4 L45.9 15.5 L45.9 38.5 L26 50 L6.1 38.5 L6.1 15.5 Z";
+---
+
+<div class="print-footer" aria-hidden="true">
+  <div class="pf-band">
+    <div class="pf-row">
+      {
+        items.map((it, i) => (
+          <Fragment>
+            {i > 0 && (
+              <svg class="pf-sep" viewBox="0 0 52 56"><path d={HEX} /></svg>
+            )}
+            {it.href ? (
+              <a class="pf-item" href={it.href}>{it.label}</a>
+            ) : (
+              <span class="pf-item">{it.label}</span>
+            )}
+          </Fragment>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .print-footer { display: none; }
+
+  @media print {
+    .print-footer { display: block; }
+
+    /* Band runs full-bleed (page has zero margins). Top padding is the gap
+       between body and the rule; bottom padding is the former @page bottom
+       margin, now painted as real dark-bg content so there is no grey canvas
+       band below the footer. The rule lives on .pf-row so it aligns to the
+       body's left/right margin. */
+    .pf-band { padding: 0.32cm 1.6cm 1.3cm; }
+
+    .pf-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      /* row-gap only for wrapped lines; horizontal spacing comes from the
+         separator margins below — flex column-gap is unreliable together with
+         flex-wrap in Chromium's print engine, so it can't be trusted here */
+      row-gap: 0.3rem;
+      padding-top: 0.16cm;
+      border-top: 1.5px solid var(--accent-brand);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.02em;
+      color: var(--fg-muted);
+    }
+
+    .pf-row .pf-item,
+    .pf-row .pf-item:link,
+    .pf-row .pf-item:visited {
+      color: var(--fg-muted);
+      text-decoration: none;
+    }
+
+    .pf-sep {
+      width: 0.4rem;
+      height: 0.44rem;
+      margin: 0 0.7rem;
+      fill: var(--accent-brand);
+      flex: 0 0 auto;
+    }
+  }
+</style>

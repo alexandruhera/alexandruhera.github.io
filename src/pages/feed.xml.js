@@ -7,7 +7,7 @@ export async function GET(context) {
   ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
-    title: "Alexandru Hera — Writing",
+    title: "Alexandru Hera — Blog",
     description:
       "Security operations, threat detection, incident response, and AI in the SOC.",
     site: context.site,
@@ -15,7 +15,7 @@ export async function GET(context) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.date,
-      link: `/writing/${post.id}/`,
+      link: `/blog/${post.id}/`,
     })),
   });
 }

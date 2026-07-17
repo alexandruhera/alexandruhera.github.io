@@ -1,8 +1,11 @@
 name: Deploy
 
+# V2 hosting: Cloudflare Pages. Manual-only until the Cloudflare account and
+# repo secrets exist (SETUP.md) — at cutover, restore `push: branches: [main]`
+# here and delete deploy-gh-pages.yml.
+
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read

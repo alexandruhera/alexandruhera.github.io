@@ -1,0 +1,186 @@
+---
+import ResumeTemplate from "../components/ResumeTemplate.astro";
+import type { ResumeData } from "../components/ResumeTemplate.astro";
+
+const data: ResumeData = {
+  meta: {
+    title: "Resume",
+    description:
+      "Alexandru Hera — 8+ years in security operations: SOC leadership, incident response, digital forensics. GSOM, GCFA, GCFR, GRTP.",
+  },
+  brand: { wordmark: ["alexandru", "hera"], tagline: "Security Operations" },
+  name: "Alexandru Hera",
+  lead: "Security Operations Center Manager · SOC leadership, incident response, and digital forensics.",
+  contact: [
+    { label: "alexandruhera.com", href: "https://alexandruhera.com" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/alexandruhera" },
+    { label: "Bucharest, Romania" },
+  ],
+  experience: [
+    {
+      period: "Jul 2025 — Present",
+      title: "Security Operations Center Manager",
+      company: "Beyond",
+      current: true,
+      points: [
+        "Lead SOC service delivery end to end: log collection, threat detection, incident triage and response, reporting, and customer engagement.",
+        "Own security policies, standards, and governance for the service.",
+        "Mentor SOC analysts through structured development plans.",
+      ],
+    },
+    {
+      period: "Aug 2020 — Jul 2025",
+      title: "Information Security Consultant",
+      company: "MassMutual Romania",
+      points: [
+        "Five years of incident response and digital forensics across EDR, SIEM, PAM, DLP, and cloud services for a global financial services company.",
+        "Automated response actions and workflows, cutting repetitive triage work.",
+        "Blue team in purple-team exercises with CrowdStrike, SpecterOps, and internal offensive teams.",
+      ],
+    },
+    {
+      period: "Feb 2019 — Jul 2020",
+      title: "Senior SOC Analyst",
+      company: "Secureworks",
+      points: [
+        "Investigated incidents across AV/EDR, network, and email telemetry at a major MDR provider.",
+        "Swept customer environments against CTI indicators; improved playbooks and procedures.",
+      ],
+    },
+    {
+      period: "Jul 2017 — Feb 2019",
+      title: "Monitoring Analyst",
+      company: "BRD Groupe Société Générale",
+      points: [
+        "Monitored critical banking infrastructure and escalated high-severity alerts.",
+      ],
+    },
+  ],
+  certifications: [
+    {
+      label: "Management",
+      items: [
+        {
+          id: "GSOM",
+          name: "GIAC Security Operations Manager",
+          primary: true,
+          skills: [
+            "SOC strategy & design",
+            "Team leadership & development",
+            "Detection program management",
+            "Threat-intel integration",
+            "SOC metrics & KPIs",
+            "SOC maturity assessment",
+            "MITRE ATT&CK alignment",
+          ],
+        },
+      ],
+    },
+    {
+      label: "Forensics & Incident Response",
+      items: [
+        {
+          id: "GCFA",
+          name: "GIAC Certified Forensic Analyst",
+          primary: true,
+          skills: [
+            "Enterprise incident response",
+            "Threat hunting",
+            "Windows forensics",
+            "Memory forensics",
+            "Timeline & super-timeline",
+            "Anti-forensics detection",
+            "Volatility",
+            "KAPE",
+            "Plaso",
+          ],
+        },
+        {
+          id: "GCFR",
+          name: "GIAC Cloud Forensics Responder",
+          primary: true,
+          skills: [
+            "Cloud incident response",
+            "Microsoft 365 forensics",
+            "Azure / Entra ID",
+            "AWS & GCP log analysis",
+            "Unified Audit Log",
+            "OAuth & identity abuse",
+            "CloudTrail",
+          ],
+        },
+      ],
+    },
+    {
+      label: "Offensive Security",
+      items: [
+        {
+          id: "GRTP",
+          name: "GIAC Red Team Professional",
+          primary: true,
+          skills: [
+            "Red-team engagement planning",
+            "Adversary emulation",
+            "Active Directory attacks",
+            "C2 infrastructure",
+            "Lateral movement & persistence",
+            "Defense evasion",
+            "Cobalt Strike",
+            "BloodHound",
+          ],
+        },
+      ],
+    },
+    {
+      label: "Foundations",
+      items: [
+        {
+          id: "AWS",
+          name: "AWS Certified Cloud Practitioner",
+          skills: ["Cloud fundamentals", "AWS core services", "Shared-responsibility model", "Cost & billing"],
+        },
+        {
+          id: "SEC+",
+          name: "CompTIA Security+",
+          skills: ["Network security", "Threats & attacks", "Cryptography", "Identity & access", "Risk & compliance"],
+        },
+        {
+          id: "CCNA",
+          name: "CCNA Routing and Switching",
+          skills: ["Routing & switching", "Network fundamentals", "IP addressing", "Network security"],
+        },
+      ],
+    },
+  ],
+  achievements: [
+    {
+      icon: "lucide:trophy",
+      title: "Google Cloud Security MSSP of the Year (EMEA)",
+      desc: "2026 Google Cloud Partner Award recognizing Beyond's excellence in migrating and modernizing security operations into a Google-centric Agentic SOC.",
+    },
+    {
+      icon: "lucide:award",
+      title: "GIAC Advisory Board",
+      desc: "Invited membership — top-percentile performance across GIAC examinations.",
+    },
+  ],
+  education: [
+    {
+      heading: "Education",
+      items: [
+        { icon: "lucide:graduation-cap", title: "Computing and IT (BSc)", sub: "University of Derby · 2022" },
+        { icon: "lucide:graduation-cap", title: "Network Engineering (AP)", sub: "Danish Academy of Business and Technology · 2016" },
+      ],
+    },
+    {
+      heading: "Training",
+      items: [
+        { icon: "lucide:users", title: "SANS LDR551", sub: "Building and Leading Security Operations Centers" },
+        { icon: "lucide:target", title: "SANS SEC565", sub: "Red Team Operations and Adversary Emulation" },
+      ],
+    },
+  ],
+};
+---
+
+<ResumeTemplate data={data} />

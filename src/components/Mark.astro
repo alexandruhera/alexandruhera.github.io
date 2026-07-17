@@ -1,0 +1,24 @@
+---
+// Trail mark (brand/master.svg) — structure inherits currentColor,
+// accent reads --accent-brand. Size it via the class you pass in.
+const { class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 52 56"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <path
+    d="M26 4 L45.9 15.5 L45.9 38.5 L26 50 L6.1 38.5 L6.1 15.5 Z"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+    stroke-linejoin="round"></path>
+  <circle cx="14.4" cy="33.7" r="1.5" fill="var(--accent-brand)" opacity="0.18"></circle>
+  <circle cx="19.8" cy="30.6" r="2.1" fill="var(--accent-brand)" opacity="0.4"></circle>
+  <path
+    d="M26 22.8 L29.64 24.9 L29.64 29.1 L26 31.2 L22.36 29.1 L22.36 24.9 Z"
+    fill="var(--accent-brand)"></path>
+</svg>

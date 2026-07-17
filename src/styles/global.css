@@ -1,4 +1,4 @@
-/* Design tokens — dark-first, kostas.page-inspired oklch system */
+/* Design tokens — dark-first oklch system */
 
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
@@ -12,6 +12,9 @@
   --border: oklch(26% 0.02 260);
   --accent: oklch(68% 0.14 240);
   --accent-strong: oklch(75% 0.15 240);
+  --accent-brand: oklch(64% 0.13 22);
+  --ok: oklch(65% 0.13 150);
+  --warn: oklch(75% 0.12 80);
   --radius: 0.25rem;
   --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -29,6 +32,9 @@
   --border: oklch(88% 0.01 240);
   --accent: oklch(45% 0.15 245);
   --accent-strong: oklch(38% 0.15 245);
+  --accent-brand: oklch(49% 0.14 22);
+  --ok: oklch(52% 0.14 150);
+  --warn: oklch(58% 0.13 80);
   color-scheme: light;
 }
 
@@ -61,9 +67,97 @@ body {
 main {
   flex: 1;
   width: 100%;
-  max-width: 46rem;
+  max-width: var(--content-max, 64rem);
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 3rem 1.75rem 5rem;
+}
+
+@media (max-width: 40rem) {
+  main { padding: 2.25rem 1.25rem 4rem; }
+}
+
+/* Prose surfaces (About, articles) cap their measure for readability while
+   still sitting in the shared content column, so headers stay left-aligned
+   with every other page. */
+.prose { max-width: 42rem; }
+
+/* Long-form article typography (blog posts, About). Scoped so it only shapes
+   prose surfaces, not the app-like pages. The post-header h1 keeps its own
+   styling; these rules shape the rendered markdown body. */
+.prose :first-child { margin-top: 0; }
+
+.prose h2 {
+  font-size: 1.5rem;
+  margin: 2.6rem 0 0.8rem;
+  scroll-margin-top: 5rem;
+  text-wrap: balance;
+}
+
+.prose h3 {
+  font-size: 1.2rem;
+  margin: 2rem 0 0.6rem;
+  scroll-margin-top: 5rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin-bottom: 1.15rem;
+  text-wrap: pretty;
+}
+
+.prose li { margin-bottom: 0.35rem; }
+.prose li::marker { color: var(--accent); }
+
+/* in running prose, links are underlined so they're distinguishable */
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent);
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--accent-strong);
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: block;
+  margin: 1.5rem 0;
+}
+
+.prose blockquote {
+  margin: 1.5rem 0;
+  font-style: italic;
+}
+
+.prose hr { margin: 2.5rem 0; }
+
+/* --- Typography system ---
+   TWO TYPEFACES, TWO JOBS:
+   • Inter (--font-sans) — headings and running prose/body.
+   • JetBrains Mono (--font-mono) — every "instrument-panel" element: page +
+     section eyebrows, meta labels, dates, nav, buttons, chips, code, data
+     readouts, the wordmark. If it's a label or a datum, it's mono.
+
+   SANS HEADING SCALE:  h1 2.1 · h2 1.35 · h3 1.1 rem  (hero h1 uses a clamp).
+   BODY: 1rem, line-height 1.65; .lead ~1.02rem, muted.
+
+   MONO LADDER (the label tier — keep chrome on these four steps):
+     --fs-micro 0.66  · fine print, dense tags, hints
+     --fs-label 0.72  · eyebrows, .mono-label, chips, meta/dates
+     --fs-ui    0.80  · form labels, list UI, footer links
+     --fs-nav   0.85  · nav links, buttons, wordmark
+   Data-dense components (résumé badges, service panels, terminal) may sit at
+   or below --fs-micro by design; everything else should map to a step. */
+:root {
+  --fs-micro: 0.66rem;
+  --fs-label: 0.72rem;
+  --fs-ui: 0.8rem;
+  --fs-nav: 0.85rem;
 }
 
 h1, h2, h3 {
@@ -82,6 +176,12 @@ ul, ol { padding-left: 1.4rem; }
 a {
   color: var(--accent);
   text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 a:hover {
@@ -113,6 +213,19 @@ pre {
 
 pre code { background: none; border: none; padding: 0; }
 
+/* Shiki dual theme (defaultColor: false emits --shiki-light/--shiki-dark vars);
+   dark is the site default, light applies under data-theme="light". */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-dark);
+  background-color: transparent !important;
+}
+
+:root[data-theme="light"] .astro-code,
+:root[data-theme="light"] .astro-code span {
+  color: var(--shiki-light);
+}
+
 hr {
   border: none;
   border-top: 1px solid var(--border);
@@ -132,7 +245,7 @@ blockquote {
 .btn {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: var(--fs-nav);
   font-weight: 500;
   padding: 0.55rem 1.1rem;
   border-radius: var(--radius);
@@ -171,26 +284,97 @@ blockquote {
   gap: 0.9rem;
   margin: 1.6rem 0;
 }
-
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.15rem 1.25rem;
-  transition: border-color 0.15s;
 }
 
-.card:hover { border-color: var(--accent); }
+/* --- Animated worm-border surface (shared primitive) ---
+   A bright arc fades in and travels around the border on hover, over a soft
+   tint of the same colour. A bordered surface opts in via `.card` or `.worm`;
+   set --worm to tint it — it defaults to the interaction accent (blue), and
+   identity surfaces such as the résumé trail set it to --accent-brand.
+   Fade-IN is slow and elegant; fade-OUT is quick, so moving between two
+   adjacent surfaces never leaves both of them lit at once. */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:where(.card, .worm) {
+  position: relative;
+  --worm: var(--accent);
+  transition: border-color 0.18s ease, transform 0.15s ease;
+}
+
+:where(.card, .worm)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg,
+    color-mix(in oklch, var(--worm) 75%, white) 45deg,
+    var(--worm) 60deg,
+    color-mix(in oklch, var(--worm) 35%, transparent) 105deg,
+    transparent 150deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+:is(.card, .worm):hover,
+:is(.card, .worm):focus-within {
+  border-color: color-mix(in oklch, var(--worm) 55%, var(--border));
+  transition: border-color 0.45s ease, transform 0.15s ease;
+}
+
+:is(.card, .worm):hover::before,
+:is(.card, .worm):focus-within::before {
+  opacity: 1;
+  transition: opacity 0.45s ease;
+  animation: worm 5s linear infinite;
+}
+
+/* interactive cards lift on hover; static info surfaces (.worm) stay put */
+.card:hover,
+.card:focus-within {
+  transform: translateY(-2px);
+}
+
+@keyframes worm {
+  to { --angle: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.card, .worm),
+  .card:hover {
+    transition: none;
+    transform: none;
+  }
+  :is(.card, .worm):hover::before,
+  :is(.card, .worm):focus-within::before {
+    animation: none;
+    opacity: 1;
+    background: none;
+  }
+}
 
 .card h3 {
   margin: 0 0 0.4rem;
   font-size: 1rem;
-}
-
-.card h3 .prefix {
-  font-family: var(--font-mono);
-  color: var(--accent);
-  margin-right: 0.4rem;
 }
 
 .card p {
@@ -202,8 +386,60 @@ blockquote {
 /* Mono label (section eyebrows, dates, tags) */
 .mono-label {
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: var(--fs-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--fg-muted);
+}
+
+
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-brand);
+}
+
+/* Reveal-on-scroll (public/reveal.js adds html.js-reveal + .in-view) */
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+html.js-reveal [data-reveal].in-view {
+  opacity: 1;
+  transform: none;
+}
+
+/* Parked / placeholder page state */
+.parked {
+  margin-top: 2rem;
+  padding: 2.2rem 1.6rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.parked p {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--fg-muted);
+}
+
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg-muted);
+  background: var(--bg-muted);
 }

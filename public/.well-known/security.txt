@@ -1,0 +1,4 @@
+Contact: mailto:alex@alexandruhera.com
+Expires: 2027-07-14T00:00:00.000Z
+Preferred-Languages: en, ro
+Canonical: https://alexandruhera.com/.well-known/security.txt

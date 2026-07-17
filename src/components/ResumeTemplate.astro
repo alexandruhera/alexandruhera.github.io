@@ -1,0 +1,755 @@
+---
+// Reusable résumé template — the design of alexandruhera.com/resume, driven by
+// a data object so the same layout (hex-node spine, hex cert badges, repeating
+// print letterhead + footer) can render any person's résumé. Alex's own
+// /resume and the local-only resume-lab pages both render through this.
+import Base from "../layouts/Base.astro";
+import PrintLetterhead from "./PrintLetterhead.astro";
+import PrintFooter from "./PrintFooter.astro";
+import { Icon } from "astro-icon/components";
+
+export interface ResumeData {
+  meta: { title: string; description: string };
+  brand: { wordmark: [string, string]; tagline: string };
+  name: string;
+  lead: string;
+  contact: { label: string; href?: string }[];
+  experience: {
+    period: string;
+    title: string;
+    company: string;
+    current?: boolean;
+    points: string[];
+  }[];
+  certHint?: string;
+  certifications: {
+    label: string;
+    items: { id: string; name: string; primary?: boolean; skills: string[] }[];
+  }[];
+  achievements?: { icon: string; title: string; desc: string }[];
+  education: { heading: string; items: { icon: string; title: string; sub: string }[] }[];
+  skills?: { label: string; items: string[] }[];
+}
+
+const { data } = Astro.props as { data: ResumeData };
+const HEX = "M26 4 L45.9 15.5 L45.9 38.5 L26 50 L6.1 38.5 L6.1 15.5 Z";
+
+const skills =
+  data.skills ??
+  data.certifications.map((g) => ({
+    label: g.label,
+    items: [...new Set(g.items.flatMap((i) => i.skills))],
+  }));
+---
+
+<Base title={data.meta.title} description={data.meta.description}>
+  <table class="rtable">
+    <thead class="rthead"><tr><td>
+      <PrintLetterhead wordmark={data.brand.wordmark} tagline={data.brand.tagline} />
+    </td></tr></thead>
+    <tbody class="rtbody"><tr><td>
+      <div class="resume-head">
+        <div>
+          <p class="eyebrow">resume</p>
+          <h1>{data.name}</h1>
+          <p class="lead">{data.lead}</p>
+        </div>
+        <div class="head-actions">
+          <button id="print-btn" class="btn btn-primary" type="button">
+            <Icon name="lucide:printer" /> Print
+          </button>
+          <a class="btn" href="/contact/">Contact</a>
+        </div>
+      </div>
+
+      <hr class="sep" />
+
+      <section class="rsec rsec-flow">
+        <h2>Experience</h2>
+        <ol class="spine">
+          {
+            data.experience.map((r) => (
+              <li class:list={["stop", "worm", { current: r.current }]} data-reveal>
+                <svg class="node" viewBox="0 0 52 56" aria-hidden="true">
+                  <path d={HEX} />
+                </svg>
+                <div class="stop-head">
+                  <h3>{r.title}</h3>
+                  <p class="stop-meta">
+                    <span class="co">{r.company}</span>
+                    <span class="when">{r.period}</span>
+                    {r.current && <span class="now">NOW</span>}
+                  </p>
+                </div>
+                <ul>
+                  {r.points.map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <hr class="sep" />
+
+      <section class="rsec">
+        <h2>Certifications</h2>
+        <p class="cert-hint mono-label">
+          {data.certHint ?? "hover a certification to see what it covers"}
+        </p>
+        {
+          data.certifications.map((g) => (
+            <div class="cgroup" data-reveal>
+              <p class="mono-label">{g.label}</p>
+              <div class="badges">
+                {g.items.map((c) => (
+                  <div class:list={["badge", "worm", { giacb: c.primary }]} tabindex="0">
+                    <div class="badge-main">
+                      <span class:list={["hexbadge", { minor: !c.primary }]}>
+                        <svg viewBox="0 0 52 56" aria-hidden="true">
+                          <path d={HEX} />
+                        </svg>
+                        <b>{c.id}</b>
+                      </span>
+                      <span class="badge-name">{c.name}</span>
+                    </div>
+                    <div class="badge-reveal">
+                      <div class="badge-reveal-in">
+                        <div class="reveal-chips">
+                          {c.skills.map((s) => (
+                            <span>{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </section>
+
+      {
+        data.achievements && data.achievements.length > 0 && (
+          <Fragment>
+            <hr class="sep" />
+            <section class="rsec">
+              <h2>Achievements</h2>
+              <ul class="achievements">
+                {data.achievements.map((a) => (
+                  <li class="ach worm" data-reveal>
+                    <span class="ach-badge">
+                      <svg viewBox="0 0 52 56" aria-hidden="true"><path d={HEX} /></svg>
+                      <Icon name={a.icon} />
+                    </span>
+                    <strong>{a.title}</strong>
+                    <span class="ach-desc">{a.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </Fragment>
+        )
+      }
+
+      <hr class="sep" />
+
+      <div class="edu-train rsec" style={`--edu-cols:${data.education.length}`}>
+        {
+          data.education.map((col) => (
+            <div class="edu-col">
+              <h2>{col.heading}</h2>
+              {col.items.map((item) => (
+                <div class="et-card worm" data-reveal>
+                  <span class="hexbadge icon">
+                    <svg viewBox="0 0 52 56" aria-hidden="true"><path d={HEX} /></svg>
+                    <Icon name={item.icon} />
+                  </span>
+                  <strong>{item.title}</strong>
+                  <span class="et-sub">{item.sub}</span>
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- print-only: skills distilled from the certifications; placed last -->
+      <section class="skills-print rsec">
+        <h2>Skills</h2>
+        {
+          skills.map((g) => (
+            <p class="skill-row">
+              <span class="skill-cat">{g.label}</span>
+              <span class="skill-list">{g.items.join("  ·  ")}</span>
+            </p>
+          ))
+        }
+      </section>
+    </td></tr></tbody>
+    <tfoot class="rtfoot"><tr><td>
+      <PrintFooter items={data.contact} />
+    </td></tr></tfoot>
+  </table>
+
+  <script is:inline src="/reveal.js" defer></script>
+  <script is:inline src="/resume.js" defer></script>
+</Base>
+
+<style>
+  /* On screen the print <table> wrapper is neutralised to plain blocks, so
+     the layout is unchanged; @media print restores real table display so the
+     <thead> letterhead repeats on every page. */
+  .rtable,
+  .rthead,
+  .rtbody,
+  .rtfoot,
+  .rtable tr,
+  .rtable td {
+    display: block;
+  }
+
+  .resume-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .resume-head h1 { max-width: 24ch; }
+  .lead { color: var(--fg-muted); max-width: 34rem; }
+  .head-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+  .head-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+
+  .head-actions :global(svg) { width: 1em; height: 1em; }
+
+  /* --- the spine: brand trail with hexagon nodes --- */
+  .spine {
+    list-style: none;
+    padding: 0.3rem 0 0 1.7rem;
+    margin: 1.2rem 0 0;
+    position: relative;
+  }
+
+  /* the continuous grey base line the nodes sit on */
+  .spine::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0.4rem;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .stop {
+    position: relative;
+    padding: 0.55rem 0.85rem 0.65rem;
+    margin-bottom: 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+
+  /* --- single-segment trail fill (pure CSS, no JS) ---
+     The line segment from a role's node down to the NEXT node lights red on
+     hover; nothing above or below changes. At rest the current role's segment
+     stays lit as the anchor. Uses .stop::after (::before belongs to .worm). */
+  .stop::after {
+    content: "";
+    position: absolute;
+    left: calc(-1.7rem - 0.5px);       /* centered on the node / grey base line */
+    top: calc(0.15rem + 11px);         /* this node's center */
+    width: 2px;
+    height: calc(100% + 0.7rem + 2px); /* reach next node: card + gap + borders */
+    background: transparent;
+    z-index: 0;
+    pointer-events: none;
+    transition: background 0.3s ease;
+  }
+
+  /* the last role has no next node — stop at its own node */
+  .stop:last-child::after {
+    height: calc(100% - 0.15rem - 11px);
+  }
+
+  /* hover lights the hovered segment; at rest the whole trail is neutral grey */
+  .stop:hover::after { background: var(--accent-brand); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stop::after { transition: none; }
+  }
+
+  .node {
+    position: absolute;
+    left: calc(-1.7rem - 10px);
+    top: 0.15rem;
+    width: 21px;
+    height: 22px;
+    fill: var(--fg-muted);
+    z-index: 1;
+    transition: fill 0.2s ease, transform 0.2s ease;
+  }
+
+  .node path { stroke: var(--bg); stroke-width: 3; }
+
+  /* only the hovered node lights + lifts; at rest every node is neutral grey */
+  .stop:hover .node {
+    fill: var(--accent-brand);
+    transform: scale(1.15);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stop:hover .node { transform: none; }
+  }
+
+  .stop-head {
+    margin-bottom: 0.5rem;
+  }
+
+  .stop h3 { margin: 0; }
+
+  /* employer + time, stacked under the title */
+  .stop-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    margin: 0.15rem 0 0;
+    font-family: var(--font-mono);
+  }
+
+  .stop-meta .co {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .stop-meta .when {
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    color: var(--fg-muted);
+  }
+
+  .now {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--accent-brand);
+    border: 1px solid var(--accent-brand);
+    border-radius: 999px;
+    padding: 0.02rem 0.4rem;
+  }
+
+  .stop ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--fg-muted);
+    font-size: 0.92rem;
+  }
+
+  .stop ul li { margin-bottom: 0.25rem; }
+
+  /* --- hex badges --- */
+  .hexbadge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.8rem;
+    flex: 0 0 auto;
+  }
+
+  .hexbadge svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--accent-brand);
+    stroke-width: 2.4;
+  }
+
+  .hexbadge b {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+  }
+
+  /* foundational certs read in blue, distinct from the red primary set */
+  .hexbadge.minor svg { stroke: var(--accent); stroke-width: 2; }
+  .hexbadge.minor b { color: var(--accent); }
+
+  .hexbadge.icon {
+    width: 2.5rem;
+    height: 2.7rem;
+  }
+
+  .hexbadge.icon svg:first-child { stroke: var(--accent); stroke-width: 2; }
+
+  .hexbadge.icon :global(svg:last-child) {
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+    color: var(--fg-muted);
+  }
+
+  .cert-hint {
+    font-size: 0.66rem;
+    opacity: 0.7;
+    margin: 0.3rem 0 0.2rem;
+  }
+
+  .cgroup { margin: 1.1rem 0 0; }
+
+  .cgroup > .mono-label {
+    font-size: 0.66rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 0.7rem;
+    align-items: start;
+  }
+
+  /* card: uniform collapsed height, expands on hover/focus */
+  .badge {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .badge:focus-visible { outline: none; }
+
+  .badge-main {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 0.7rem;
+    min-height: 3.7rem;
+  }
+
+  .badge-name {
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+    line-height: 1.3;
+  }
+
+  .giacb .badge-name { color: var(--fg); }
+
+  .badge-reveal {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease;
+  }
+
+  .badge:hover .badge-reveal,
+  .badge:focus-within .badge-reveal {
+    grid-template-rows: 1fr;
+  }
+
+  .badge-reveal-in { overflow: hidden; }
+
+  .reveal-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.28rem;
+    margin: 0 0.7rem;
+    padding: 0.55rem 0 0.7rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .reveal-chips span {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--fg-muted);
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.08rem 0.4rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge, .badge-reveal { transition: none; }
+  }
+
+  /* achievements — quiet, aligned to the title; robust to text length */
+  .achievements {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 0.7rem;
+  }
+
+  .ach {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.75rem;
+    row-gap: 0.1rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+
+  .ach-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.6rem;
+    flex: 0 0 auto;
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+
+  .ach-badge svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--accent-brand);
+    stroke-width: 2.2;
+  }
+
+  .ach-badge :global(svg:last-child) {
+    position: relative;
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--accent-brand);
+  }
+
+  .ach strong {
+    grid-column: 2;
+    align-self: center;
+    font-size: 0.9rem;
+  }
+
+  .ach-desc {
+    grid-column: 2;
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+    line-height: 1.35;
+  }
+
+  /* education / training — one column per data column; cards stack within */
+  .edu-train {
+    display: grid;
+    grid-template-columns: repeat(var(--edu-cols, 2), 1fr);
+    column-gap: 1rem;
+    row-gap: 0.7rem;
+    align-items: start;
+  }
+
+  @media (max-width: 34rem) {
+    .edu-train { grid-template-columns: 1fr; }
+  }
+
+  .edu-col { display: flex; flex-direction: column; gap: 0.7rem; }
+  .edu-col h2 { margin: 0 0 0.1rem; }
+
+  .et-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.7rem;
+    row-gap: 0.1rem;
+    align-content: center;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+
+  .et-card .hexbadge {
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+
+  .et-card strong {
+    grid-column: 2;
+    align-self: center;
+  }
+
+  /* institution / course line — normal-case mono, matching the Experience
+     company + date meta (not the uppercase eyebrow treatment) */
+  .et-sub {
+    grid-column: 2;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--fg-muted);
+    line-height: 1.4;
+  }
+
+  /* worm-border hover comes from the shared `.worm` primitive (global.css).
+     Here we only assign each surface its tint: the career trail, primary
+     credentials, and achievements read in brand red (identity); foundational
+     certs and education read in blue (matching their hex badges). */
+  .stop, .ach, .badge.giacb {
+    --worm: var(--accent-brand);
+  }
+
+  /* section separators */
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.8rem 0 1.8rem;
+  }
+
+  /* print-only skills section */
+  .skills-print { display: none; }
+
+  /* --- print: the SAME design — full color, follows theme ---
+     The letterhead repeats on every page via table-header-group (main becomes
+     display:table below), so @page only needs normal page margins. */
+  /* No side page margin: the letterhead/footer bands run full-bleed edge to
+     edge (a proper banner, and the honeycomb bleeds off the page instead of
+     clipping mid-page). Body content gets its side margin from the tbody cell
+     below, so header text, body text, and footer all align. */
+  /* Full-bleed: zero page margins so no margin boxes exist. Headless Chrome
+     does not propagate the root background into @page margin boxes (they fall
+     back to the default #121212 canvas, a grey band above the letterhead), so
+     instead the letterhead/footer bands run edge to edge and carry the former
+     top/bottom margin as their own inner padding — painted as real dark-bg
+     content on every page. */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  @media print {
+    :global(header),
+    :global(footer),
+    .head-actions {
+      display: none !important;
+    }
+
+    /* print follows the active theme — dark by default, light if toggled */
+    :global(*),
+    :global(*::before),
+    :global(*::after) {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    :global(html),
+    :global(body) {
+      background: var(--bg) !important;
+      font-size: 10.8pt;
+    }
+
+    :global(main) {
+      padding: 0 !important;
+      max-width: none !important;
+    }
+
+    /* the resume is wrapped in a real <table>; the <thead> letterhead and
+       <tfoot> contact bar are repeated at the top/bottom of every printed
+       page by the print engine */
+    .rtable { display: table; width: 100%; border-collapse: collapse; }
+    .rthead { display: table-header-group; }
+    .rtbody { display: table-row-group; }
+    .rtfoot { display: table-footer-group; }
+    .rtable tr { display: table-row; }
+    .rtable td { display: table-cell; padding: 0; }
+    /* body content inset from the page edges; the header/footer bands stay
+       full-bleed and inset their own content by the same amount (1.6cm) */
+    .rtbody td { padding: 0 1.6cm; }
+
+    /* keep each section together — a section moves whole to the next page
+       rather than splitting across the break (Certs, Achievements, etc.) */
+    .rsec {
+      break-inside: avoid;
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+    /* Experience can exceed a page — let it flow (role cards stay intact via
+       .stop break-inside) instead of skipping to the next page and wasting one */
+    .rsec-flow { break-inside: auto; }
+    /* standalone screen separators are replaced by the per-section rule above */
+    .sep { display: none; }
+
+    /* the letterhead band already carries the name — drop the on-screen
+       eyebrow AND the name h1 in print */
+    .resume-head .eyebrow,
+    .resume-head h1 { display: none; }
+    .cert-hint { display: none; }
+    /* skills are a hover feature on web — in print they get their own section */
+    .badge-reveal { display: none; }
+
+    .skills-print { display: block; }
+
+    .skills-print h2 { margin-bottom: 0.5rem; }
+
+    /* compact the credentials so pages stay dense */
+    .badge-main { min-height: 3.1rem; padding: 0.4rem 0.65rem; }
+    .badges { gap: 0.5rem; }
+    .cgroup { margin-top: 0.7rem; }
+    .cgroup > .mono-label { margin-bottom: 0.3rem; }
+    .achievements { gap: 0.5rem; margin-top: 0.4rem; }
+    .ach { padding: 0.55rem 0.75rem; }
+    .et-card { padding: 0.55rem 0.75rem; }
+    .edu-train { row-gap: 0.5rem; }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 11rem 1fr;
+      gap: 0.9rem;
+      align-items: baseline;
+      padding: 0.35rem 0;
+      margin: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .skill-cat {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-brand);
+    }
+
+    .skill-list {
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+    .lead { margin: 0; }
+    :global(h2) { margin-top: 1.2rem; break-after: avoid; }
+    .spine { padding-top: 0.1rem; margin-top: 0.7rem; }
+    .stop { padding-bottom: 0.9rem; }
+    .stop ul { line-height: 1.4; }
+    .stop ul li { margin-bottom: 0.1rem; }
+
+    /* print has no hover — keep the trail neutral grey, exactly like the site
+       renders it at rest (base line --border, nodes --fg-muted); just drop the
+       hover fill segments */
+    .stop::after { display: none; }
+
+    .stop, .badge, .cgroup, .et-card, .ach { break-inside: avoid; }
+    .skills-print, .skill-row { break-inside: avoid; }
+
+    /* content flows naturally; the repeating header/footer bracket every page */
+
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import { Icon } from "astro-icon/components";
+import Mark from "../components/Mark.astro";
 
 interface Props {
   title: string;
@@ -7,16 +9,17 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
-const siteName = "Alexandru Hera";
+const siteName = "Alexandru Hera"; // proper name — SEO/author/og
+const brandName = "alexandruhera"; // wordmark — shown in the browser tab
 const desc =
   description ??
   "Security operations, threat detection, and incident response — writing and consulting by Alexandru Hera.";
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const nav = [
   { href: "/", label: "home" },
-  { href: "/about/", label: "about" },
+  { href: "/blog/", label: "blog" },
   { href: "/services/", label: "services" },
-  { href: "/writing/", label: "writing" },
+  { href: "/about/", label: "about" },
   { href: "/resume/", label: "resume" },
   { href: "/contact/", label: "contact" },
 ];
@@ -28,16 +31,18 @@ const current = Astro.url.pathname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title === siteName ? title : `${title} — ${siteName}`}</title>
+    <title>{title === siteName ? brandName : `${title.toLowerCase()} — ${brandName}`}</title>
     <meta name="description" content={desc} />
     <meta name="author" content={siteName} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
       type="application/rss+xml"
-      title="Alexandru Hera — Writing"
+      title="Alexandru Hera — Blog"
       href={new URL("feed.xml", Astro.site)}
     />
     <meta property="og:type" content="website" />
@@ -45,7 +50,11 @@ const current = Astro.url.pathname;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={new URL("/og-image.png", Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL("/og-image.png", Astro.site)} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={desc} />
     <script is:inline>
@@ -56,7 +65,10 @@ const current = Astro.url.pathname;
   <body>
     <header>
       <nav aria-label="Main">
-        <a class="brand" href="/">alexandru<span class="brand-accent">hera</span></a>
+        <a class="brand" href="/">
+          <Mark class="brand-mark" />
+          <span>alexandru<span class="brand-accent">hera</span></span>
+        </a>
         <div class="nav-links">
           {
             nav.map((item) => (
@@ -73,7 +85,10 @@ const current = Astro.url.pathname;
               </a>
             ))
           }
-          <button id="theme-toggle" aria-label="Toggle color scheme">◐</button>
+          <button id="theme-toggle" aria-label="Toggle color scheme">
+            <Icon name="lucide:sun" class="icon-sun" />
+            <Icon name="lucide:moon" class="icon-moon" />
+          </button>
         </div>
       </nav>
     </header>
@@ -83,13 +98,39 @@ const current = Astro.url.pathname;
     </main>
 
     <footer>
+      <div class="footer-grid">
+        <div class="f-brand">
+          <a class="f-wordmark" href="/">
+            <Mark class="f-mark" />
+            <span>alexandru<span class="brand-accent">hera</span></span>
+          </a>
+          <p class="f-blurb">
+            Security operations, threat detection, and incident response —
+            writing and consulting from Bucharest.
+          </p>
+          <div class="f-social">
+            <a href="https://github.com/alexandruhera" rel="me" aria-label="GitHub">
+              <Icon name="lucide:github" /> github
+            </a>
+            <a
+              href="https://www.linkedin.com/in/alexandruhera"
+              rel="me"
+              aria-label="LinkedIn"
+            >
+              <Icon name="lucide:linkedin" /> linkedin
+            </a>
+          </div>
+        </div>
+
+        <nav class="f-col" aria-label="Footer">
+          <p class="f-head">navigate</p>
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        </nav>
+      </div>
+
       <div class="footer-inner">
-        <span>© 2026 Alexandru Hera</span>
-        <span class="footer-links">
-          <a href="https://github.com/alexandruhera" rel="me">github</a>
-          <a href="https://www.linkedin.com/in/alexandruhera" rel="me">linkedin</a>
-          <a href="/feed.xml">rss</a>
-        </span>
+        <span>© 2026 Alexandru Hera. All rights reserved.</span>
+        <a href="/privacy/">privacy</a>
       </div>
     </footer>
 
@@ -109,14 +150,15 @@ const current = Astro.url.pathname;
         background: color-mix(in oklch, var(--bg) 92%, transparent);
         position: sticky;
         top: 0;
+        -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
         z-index: 10;
       }
 
-      nav {
-        max-width: 46rem;
+      header nav {
+        max-width: var(--content-max, 64rem);
         margin: 0 auto;
-        padding: 0.85rem 1.25rem;
+        padding: 0.9rem 1.75rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -128,10 +170,19 @@ const current = Astro.url.pathname;
         font-weight: 700;
         font-size: 0.95rem;
         color: var(--fg);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+      }
+
+      :global(.brand-mark) {
+        height: 1.5rem;
+        width: auto;
+        display: block;
       }
 
       .brand:hover { text-decoration: none; }
-      .brand-accent { color: var(--accent); }
+      .brand-accent { color: var(--accent-brand); }
 
       .nav-links {
         display: flex;
@@ -142,7 +193,7 @@ const current = Astro.url.pathname;
 
       .nav-links a {
         font-family: var(--font-mono);
-        font-size: 0.85rem;
+        font-size: var(--fs-nav);
         color: var(--fg-muted);
       }
 
@@ -162,34 +213,145 @@ const current = Astro.url.pathname;
         border-radius: var(--radius);
         color: var(--fg-muted);
         cursor: pointer;
-        font-size: 0.85rem;
+        font-size: var(--fs-nav);
         line-height: 1;
         padding: 0.3rem 0.45rem;
       }
 
       #theme-toggle:hover { border-color: var(--accent); color: var(--fg); }
 
+      #theme-toggle svg { width: 1em; height: 1em; display: block; }
+      #theme-toggle .icon-sun { display: none; }
+      :global([data-theme="light"]) #theme-toggle .icon-sun { display: block; }
+      :global([data-theme="light"]) #theme-toggle .icon-moon { display: none; }
+
       footer {
         border-top: 1px solid var(--border);
         margin-top: auto;
+        background: var(--bg-card);
+      }
+
+      .footer-grid {
+        max-width: var(--content-max, 64rem);
+        margin: 0 auto;
+        padding: 2.5rem 1.75rem 1.8rem;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      @media (max-width: 40rem) {
+        .footer-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      }
+
+      .f-wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--fg);
+      }
+
+      .f-wordmark:hover { text-decoration: none; }
+
+      :global(.f-mark) {
+        height: 1.3rem;
+        width: auto;
+        display: block;
+      }
+
+      .f-blurb {
+        margin: 0.7rem 0 0;
+        font-size: 0.82rem;
+        color: var(--fg-muted);
+        max-width: 20rem;
+      }
+
+      .f-social {
+        display: flex;
+        gap: 1.1rem;
+        margin-top: 0.9rem;
+      }
+
+      .f-social a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-mono);
+        font-size: var(--fs-ui);
+        color: var(--fg-muted);
+      }
+
+      .f-social a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      .f-social :global(svg) {
+        width: 0.9em;
+        height: 0.9em;
+        color: var(--accent);
+      }
+
+      .f-head {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--fg-muted);
+        margin: 0 0 0.6rem;
+      }
+
+      .f-col {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.45rem;
+      }
+
+      .f-col a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: var(--font-mono);
+        font-size: var(--fs-ui);
+        color: var(--fg-muted);
+      }
+
+      .f-col a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      .f-col :global(svg) {
+        width: 0.9em;
+        height: 0.9em;
+        color: var(--accent);
       }
 
       .footer-inner {
-        max-width: 46rem;
+        max-width: var(--content-max, 64rem);
         margin: 0 auto;
-        padding: 1.1rem 1.25rem;
+        padding: 1rem 1.75rem;
+        border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 0.5rem;
         font-family: var(--font-mono);
-        font-size: 0.78rem;
+        font-size: var(--fs-label);
         color: var(--fg-muted);
       }
 
-      .footer-links { display: flex; gap: 0.9rem; }
-      .footer-links a { color: var(--fg-muted); }
-      .footer-links a:hover { color: var(--fg); }
+      .footer-inner a { color: var(--fg-muted); }
+
+      .footer-inner a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
     </style>
   </body>
 </html>

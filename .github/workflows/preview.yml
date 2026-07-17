@@ -15,6 +15,10 @@ jobs:
   preview:
     name: Preview deploy and link check
     runs-on: ubuntu-latest
+    env:
+      # Preview deploys are Cloudflare-only (V2). Until the secrets exist,
+      # PRs still build and link-check but skip the deploy + comment steps.
+      CF_CONFIGURED: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -42,6 +46,7 @@ jobs:
 
       - name: Deploy preview to Cloudflare Pages
         id: preview
+        if: env.CF_CONFIGURED == 'true'
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -49,6 +54,7 @@ jobs:
           command: pages deploy dist --project-name=alexandruhera-com --branch=pr-${{ github.event.number }}
 
       - name: Comment preview URL on PR
+        if: env.CF_CONFIGURED == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           URL: ${{ steps.preview.outputs.deployment-url }}

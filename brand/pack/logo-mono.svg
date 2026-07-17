@@ -1,0 +1,6 @@
+<svg viewBox="0 0 52 56" xmlns="http://www.w3.org/2000/svg" aria-label="Signal mark">
+  <path d="M26 4 L45.9 15.5 L45.9 38.5 L26 50 L6.1 38.5 L6.1 15.5 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+  <circle cx="14.4" cy="33.7" r="1.5" fill="currentColor" opacity="0.18"/>
+  <circle cx="19.8" cy="30.6" r="2.1" fill="currentColor" opacity="0.4"/>
+  <path d="M26 22.8 L29.64 24.9 L29.64 29.1 L26 31.2 L22.36 29.1 L22.36 24.9 Z" fill="currentColor"/>
+</svg>

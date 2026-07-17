@@ -1,0 +1,102 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+const posts = (
+  await getCollection("writing", ({ data }) => !data.draft || import.meta.env.DEV)
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// group by year so the archive stays scannable as it grows
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.date.getFullYear();
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<Base
+  title="Blog"
+  description="Articles on security operations, threat detection, incident response, and AI in the SOC."
+>
+  <p class="eyebrow">blog</p>
+  {posts.length === 0 && (
+    <p><em>Nothing published yet — first articles are on their way.</em></p>
+  )}
+
+  {
+    years.map((year) => (
+      <section class="year">
+        <h2 class="year-label">{year}</h2>
+        <ul class="post-list">
+          {byYear.get(year)!.map((post) => (
+            <li>
+              <a class="post" href={`/blog/${post.id}/`}>
+                <span class="post-date mono-label">
+                  {post.data.date.toISOString().slice(0, 10)}
+                </span>
+                <span class="post-title">{post.data.title}</span>
+                <span class="post-desc">{post.data.description}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .year { margin-top: 2.5rem; }
+
+  .year-label {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    margin: 0 0 0.4rem;
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post {
+    display: block;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg);
+  }
+
+  .post:hover {
+    text-decoration: none;
+    color: var(--fg);
+  }
+
+  .post-date {
+    display: block;
+    font-size: var(--fs-label);
+  }
+
+  .post-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0.25rem 0;
+    transition: color 0.15s ease;
+  }
+
+  .post:hover .post-title { color: var(--accent); }
+
+  .post-desc {
+    display: block;
+    color: var(--fg-muted);
+    font-size: 0.88rem;
+  }
+</style>

@@ -9,3 +9,15 @@ node_modules/
 
 # OS / editor
 .DS_Store
+
+# Resume lab — third-party PII, local-only, never commit or deploy
+src/pages/lab/
+
+# Local-only tools (CV builder, job ads) — never commit or deploy
+/lab/
+
+# Local secrets (wrangler pages dev)
+.dev.vars
+
+# Wrangler local state
+.wrangler/

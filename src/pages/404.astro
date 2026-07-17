@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="404" description="Page not found.">
+  <p class="eyebrow">error 404</p>
+  <h1>No such file or directory</h1>
+
+  <pre class="term404"><code>$ cat {"{requested_page}"}
+cat: no such file or directory
+$ grep -ri "what you wanted" /var/www
+$ _</code></pre>
+
+  <p>
+    The page you're looking for doesn't exist — moved, renamed, or never
+    written. The trail is cold.
+  </p>
+  <p>
+    <a class="btn btn-primary" href="/">Back to home</a>
+    <a class="btn" href="/blog/">Browse the blog</a>
+  </p>
+</Base>
+
+<style>
+  .term404 {
+    max-width: 30rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--fg-muted);
+  }
+</style>

@@ -3,14 +3,34 @@
 Everything code-side is done and committed. The remaining steps need your
 accounts and credentials. Work top to bottom; each step says who does it.
 
-## 1. GitHub (~5 min)
+Launch is two-phase: **V1 goes live now on GitHub Pages** (DNS already points
+there from the old site, so no DNS work), **V2 moves hosting to Cloudflare**
+(contact form backend, security headers, previews) on its own timeline.
+
+## V1. Go live on GitHub Pages (~15 min)
 
 - [ ] **YOU:** `gh auth login` (GitHub.com, HTTPS, browser; scopes: repo + workflow)
-- [ ] **CLAUDE (after auth):** create repo + push, enable branch protection,
-      secret scanning, Dependabot; set `CLOUDFLARE_API_TOKEN` /
-      `CLOUDFLARE_ACCOUNT_ID` secrets (values from step 2)
+- [ ] **CLAUDE (after auth):** create the repo (public — free GitHub Pages
+      requires it; `src/pages/lab/` and `/lab/` are gitignored so no PII
+      ships), push main, enable Pages with source "GitHub Actions", enable
+      branch protection, secret scanning, Dependabot
+- [ ] **CLAUDE:** move the `alexandruhera.com` custom domain off the old
+      Pages repo onto the new one (+ `www`), enforce HTTPS, then verify the
+      live site: pages render, feed.xml, sitemap, 404, blog slugs
 - [ ] **YOU (optional):** change git identity if you prefer the GitHub noreply
       address: `git config user.email "<id>+alexandruhera@users.noreply.github.com"`
+
+Accepted V1 limitations (all fixed by V2): contact page shows a mailto card
+instead of the form (`PUBLIC_DEPLOY_TARGET=gh-pages` in deploy-gh-pages.yml —
+GitHub Pages can't run the /api/contact function), `static/_headers` security
+headers don't apply, no PR preview deploys (preview.yml still builds and
+link-checks; the deploy steps skip until Cloudflare secrets exist).
+
+## V2 begins here — Cloudflare cutover, when ready
+
+At cutover: set `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets,
+restore the `push` trigger in deploy.yml, delete deploy-gh-pages.yml, and
+remove the Pages custom domain + disable GitHub Pages on the repo (step 4).
 
 ## 2. Cloudflare account + DNS (~30 min — the careful part)
 
@@ -56,8 +76,9 @@ accounts and credentials. Work top to bottom; each step says who does it.
       **Always Use HTTPS** on
 - [ ] **YOU:** verify https://alexandruhera.com serves the new site and
       https://www.alexandruhera.com 301-redirects to apex
-- [ ] **YOU:** decommission the old site: old GitHub Pages repo → Settings →
-      Pages → remove custom domain, then archive or delete the repo
+- [ ] **YOU:** decommission V1 hosting: this repo → Settings → Pages → remove
+      custom domain and disable Pages; delete deploy-gh-pages.yml and restore
+      the push trigger in deploy.yml (drops the mailto fallback — form goes live)
 - [ ] **YOU:** Cloudflare → DNS → DNSSEC → Enable → add the DS record at the
       registrar
 
@@ -73,6 +94,45 @@ accounts and credentials. Work top to bottom; each step says who does it.
       letsencrypt.org, pki.goog, ssl.com) + iodef mailto
 - [ ] After 1 clean week: raise HSTS max-age to 31536000 in `static/_headers`
 - [ ] After 2–4 weeks of DMARC reports: tighten `_dmarc` p=none → quarantine → reject
+
+## 6. Grant Radar (post-launch feature — the venture funnel)
+
+RAG-verified, plain-Romanian alerts for open EU funding calls in cyber/
+digitalization. Funnel + authority for the annex-consultancy venture
+(see `~/business_ideas/eu-grants-venture-plan-a-z.md`), never the product
+itself. Every entry cites the official source and carries an
+"informare, nu consultanță" disclaimer.
+
+**Stage 1 — content collection + RSS (no backend, ship first):**
+
+- [ ] New collection `src/content/radar/` — schema: `title`, `program`
+      (PoCIDIF | PR-BI | Digital Europe | NCC-RO | other), `callId`, `status`
+      (deschis/urmează/închis), `deadline`, `amounts`, `cofinancing`,
+      `eligibility` (bullets), `sources` (official URLs, required),
+      `verifiedDate`, `draft`
+- [ ] `/radar` index page: open calls first, sorted by deadline; entry pages
+      link the official ghid — never mirror it
+- [ ] `/radar.xml` RSS (reuse the `feed.xml.js` pattern); link from the
+      services page
+- [ ] Workflow per edition (weekly): Claude Code session — fetch the official
+      sources (mfe.gov.ro/PoCIDIF, oportunitati-ue.gov.ro, PR București-Ilfov,
+      ncc.gov.ro, EC Funding & Tenders portal) → RAG-check the draft entry
+      against the actual ghid PDF → **human verifies every date/amount against
+      the cited source** → publish via the normal PR flow
+
+**Stage 2 — email digest (only after ~4 editions exist):**
+
+- [ ] Subscribe endpoint as a Pages Function (Turnstile-protected, same
+      pattern as the contact form), storing to Resend Audiences
+- [ ] Weekly digest via Resend broadcast — keep `send.alexandruhera.com`
+      reputation clean; consider a separate `radar.` sending subdomain for
+      broadcasts
+- [ ] Double opt-in + one-click unsubscribe (GDPR)
+
+**Validation KPI (from the council):** after 4–6 weekly editions, count
+subscribers + inbound inquiries. That number settles the "discovery gap"
+thesis cheaply — if it's ~zero, the Radar stays a personal monitoring tool
+and the funnel bet is closed.
 
 ## Day-to-day authoring (after launch)
 

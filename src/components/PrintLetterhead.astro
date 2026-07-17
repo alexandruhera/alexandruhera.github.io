@@ -1,0 +1,74 @@
+---
+// Print-only letterhead (resume). Placed inside the resume's print <thead>, so
+// it repeats at the top of every page. Slim, no band: mark + name · role on one
+// line over a thin brand rule — aligned to the body's left margin.
+import Mark from "./Mark.astro";
+
+interface Props {
+  wordmark: [string, string]; // [plain, accent]
+  tagline: string;
+}
+const { wordmark, tagline } = Astro.props;
+---
+
+<div class="print-header" aria-hidden="true">
+  <div class="ph-band">
+    <div class="ph-content">
+      <Mark class="ph-mark" />
+      <b class="ph-wordmark">{wordmark[0]}<span class="ph-accent">{wordmark[1]}</span></b>
+      <span class="ph-sep">·</span>
+      <span class="ph-tagline">{tagline}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .print-header { display: none; }
+
+  @media print {
+    .print-header { display: block; }
+
+    /* Band runs full-bleed (page has zero margins). Top padding is the former
+       @page top margin, now painted as real dark-bg content so there is no grey
+       canvas band above the letterhead. Horizontal inset matches the body.
+       Bottom padding is the gap between the rule and the content below; because
+       this lives in the <thead> it repeats on every page, so it is the reliable
+       gap under the letterhead on page 2+, where a flowed Experience card would
+       otherwise butt right against the rule. */
+    .ph-band { padding: 1.1cm 1.6cm 0.6cm; }
+
+    .ph-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.14cm;
+      border-bottom: 1.5px solid var(--accent-brand);
+    }
+
+    :global(.ph-mark) {
+      height: 1.3rem;
+      width: 1.2rem;
+      flex: 0 0 auto;
+    }
+
+    .ph-wordmark {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+
+    .ph-accent { color: var(--accent-brand); }
+
+    .ph-sep { color: var(--fg-muted); }
+
+    .ph-tagline {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+    }
+  }
+</style>

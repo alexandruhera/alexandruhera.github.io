@@ -12,9 +12,13 @@
 interface Env {
   TURNSTILE_SECRET_KEY: string;
   RESEND_API_KEY: string;
+  // optional overrides (e.g. .dev.vars uses Resend's onboarding sender while
+  // send.alexandruhera.com is unverified); production uses the defaults
+  CONTACT_TO?: string;
+  CONTACT_FROM?: string;
 }
 
-const LIMITS = { name: 200, email: 254, message: 5000 } as const;
+const LIMITS = { name: 200, email: 254, subject: 200, message: 5000 } as const;
 const TO_ADDRESS = "alex@alexandruhera.com";
 const FROM_ADDRESS = "Website contact form <form@send.alexandruhera.com>";
 
@@ -42,6 +46,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const name = ((form.get("name") as string) ?? "").trim();
   const email = ((form.get("email") as string) ?? "").trim();
+  // optional; collapse whitespace/newlines so it's safe as an email subject
+  const subject = ((form.get("subject") as string) ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
   const message = ((form.get("message") as string) ?? "").trim();
 
   if (!name || !email || !message) {
@@ -50,6 +58,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (
     name.length > LIMITS.name ||
     email.length > LIMITS.email ||
+    subject.length > LIMITS.subject ||
     message.length > LIMITS.message ||
     !email.includes("@")
   ) {
@@ -82,10 +91,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: FROM_ADDRESS,
-      to: [TO_ADDRESS],
+      from: env.CONTACT_FROM ?? FROM_ADDRESS,
+      to: [env.CONTACT_TO ?? TO_ADDRESS],
       reply_to: email,
-      subject: `[alexandruhera.com] Message from ${name}`,
+      subject: subject
+        ? `[alexandruhera.com] ${subject}`
+        : `[alexandruhera.com] Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\n${message}\n`,
     }),
   });
