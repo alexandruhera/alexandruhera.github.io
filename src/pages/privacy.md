@@ -10,8 +10,8 @@ description: "Privacy notice for alexandruhera.com — what data is processed, w
 
 **Last updated: 17 July 2026**
 
-This site is operated by Alexandru Hera ("I", "me"), Bucharest, Romania — the
-data controller for any personal data processed here. The short version: this
+This site is operated by Alexandru Hera ("I", "me") — the data controller
+for any personal data processed here. The short version: this
 site does not track you. No analytics, no advertising, no third-party
 trackers, no marketing cookies.
 
