@@ -13,6 +13,8 @@ export interface ResumeData {
   brand: { wordmark: [string, string]; tagline: string };
   name: string;
   lead: string;
+  /** Set false to hide the Print button (e.g. while the print layout is being reworked). */
+  printButton?: boolean;
   contact: { label: string; href?: string; icon?: string }[];
   experience: {
     period: string;
@@ -74,9 +76,13 @@ const skills =
           </ul>
         </div>
         <div class="head-actions">
-          <button id="print-btn" class="btn btn-primary" type="button">
-            <Icon name="lucide:printer" /> Print
-          </button>
+          {
+            data.printButton !== false && (
+              <button id="print-btn" class="btn btn-primary" type="button">
+                <Icon name="lucide:printer" /> Print
+              </button>
+            )
+          }
           <a class="btn" href="/contact/">Contact</a>
         </div>
       </div>
