@@ -13,7 +13,7 @@ export interface ResumeData {
   brand: { wordmark: [string, string]; tagline: string };
   name: string;
   lead: string;
-  contact: { label: string; href?: string }[];
+  contact: { label: string; href?: string; icon?: string }[];
   experience: {
     period: string;
     title: string;
@@ -53,6 +53,25 @@ const skills =
           <p class="eyebrow">resume</p>
           <h1>{data.name}</h1>
           <p class="lead">{data.lead}</p>
+          <ul class="contact-links">
+            {
+              data.contact.map((c) => (
+                <li>
+                  {c.href ? (
+                    <a href={c.href}>
+                      {c.icon && <Icon name={c.icon} />}
+                      {c.label}
+                    </a>
+                  ) : (
+                    <span>
+                      {c.icon && <Icon name={c.icon} />}
+                      {c.label}
+                    </span>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
         </div>
         <div class="head-actions">
           <button id="print-btn" class="btn btn-primary" type="button">
@@ -222,6 +241,36 @@ const skills =
 
   .resume-head h1 { max-width: 24ch; }
   .lead { color: var(--fg-muted); max-width: 34rem; }
+
+  .contact-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    padding: 0;
+    margin: 0.9rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-ui);
+  }
+
+  .contact-links a,
+  .contact-links span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  .contact-links a:hover { color: var(--accent); }
+
+  .contact-links :global(svg) {
+    width: 1.05em;
+    height: 1.05em;
+    color: var(--accent);
+    flex: 0 0 auto;
+  }
   .head-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 
   .head-actions .btn {
@@ -691,7 +740,8 @@ const skills =
     /* the letterhead band already carries the name — drop the on-screen
        eyebrow AND the name h1 in print */
     .resume-head .eyebrow,
-    .resume-head h1 { display: none; }
+    .resume-head h1,
+    .contact-links { display: none; }
     .cert-hint { display: none; }
     /* skills are a hover feature on web — in print they get their own section */
     .badge-reveal { display: none; }
