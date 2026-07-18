@@ -8,15 +8,19 @@ const data: ResumeData = {
     description:
       "Alexandru Hera — Security Operations Center Manager. 8+ years in security operations. GSOM, GCFA, GCFR, GRTP.",
   },
-  brand: { wordmark: ["alexandru", "hera"], tagline: "Security Operations" },
+  brand: { wordmark: ["alexandru", "hera"], tagline: "" },
   name: "Alexandru Hera",
-  lead: "Security Operations Center Manager",
-  // temporarily hidden while the print layout gets its pending adjustments
-  printButton: false,
+  lead: "",
+  location: "Bucharest, Romania, 011354",
+  // Print button is a local-only tool for regenerating the PDF exports; the
+  // live site ships without it (import.meta.env.DEV is false in the build).
+  printButton: import.meta.env.DEV,
   contact: [
+    { icon: "lucide:phone", label: "+40 721 812 347", href: "tel:+40721812347" },
+    { icon: "lucide:mail", label: "contact@alexandruhera.com", href: "mailto:contact@alexandruhera.com" },
     { icon: "lucide:globe", label: "alexandruhera.com", href: "https://alexandruhera.com" },
-    { icon: "lucide:github", label: "github.com/alexandruhera", href: "https://github.com/alexandruhera" },
-    { icon: "lucide:linkedin", label: "linkedin.com/in/alexandruhera", href: "https://www.linkedin.com/in/alexandruhera" },
+    { icon: "lucide:github", label: "github", href: "https://github.com/alexandruhera" },
+    { icon: "lucide:linkedin", label: "linkedin", href: "https://www.linkedin.com/in/alexandruhera" },
   ],
   experience: [
     {
@@ -25,10 +29,10 @@ const data: ResumeData = {
       company: "Beyond",
       current: true,
       points: [
-        "Leading the SOC service with a focus on strategic, tactical and operational excellence.",
-        "Oversee end-to-end SOC operations, ensuring effective delivery across log collection, threat detection, incident triage and response, reporting, quality assurance, and customer engagement.",
-        "Drive the creation and refinement of security policies, standards, and governance frameworks to align with organizational goals and industry best practices.",
-        "Mentor and guide SOC team members through structured development plans and long-term growth strategies, fostering a high-performance culture grounded in collaboration, accountability, and continuous learning.",
+        "Lead the SOC service and set its strategic and operational direction.",
+        "Oversee SOC operations across log collection, threat detection, incident triage and response, reporting, quality assurance, and customer engagement.",
+        "Write and maintain the SOC's security policies, standards, and governance frameworks.",
+        "Mentor analysts and set development plans that grow the team's skills.",
       ],
     },
     {
@@ -36,11 +40,11 @@ const data: ResumeData = {
       title: "Information Security Consultant",
       company: "MassMutual Romania",
       points: [
-        "Respond to incidents, leveraging incident response and digital forensics principles and technologies like EDR, SIEM, PAM, DLP, cloud services, and more.",
-        "Document and adhere to security operations processes, performing quality assurance and mentoring junior analysts.",
-        "Automate response actions, creating efficient workflows and playbooks, and continuously improving SOC capabilities.",
-        "Engage in purple team exercises with providers like CrowdStrike, SpecterOps, and the internal offensive operations team, as a member of the blue team.",
-        "Maintain technical relationships with external SOC providers, such as Endpoint Engineering, IAM, Cloud Security, Fraud, and more.",
+        "Responded to incidents using digital forensics and incident response (DFIR) principles and tooling such as EDR, SIEM, PAM, DLP, and cloud services.",
+        "Documented and followed security operations processes, ran quality assurance, and mentored junior analysts.",
+        "Automated response actions and built workflows and playbooks to improve SOC capabilities.",
+        "Ran purple team exercises on the blue team alongside CrowdStrike, SpecterOps, and the internal offensive operations team.",
+        "Maintained technical relationships with partner teams such as Endpoint Engineering, IAM, Cloud Security, and Fraud.",
       ],
     },
     {
@@ -50,7 +54,7 @@ const data: ResumeData = {
       points: [
         "Investigated low to medium-severity incidents from multiple sources, such as AV/EDR, network, and email.",
         "Used indicators of compromise (IOCs) from internally produced cyber threat intelligence (CTI) reports to sweep the customer's environment.",
-        "Provided continuous feedback on playbook and procedure improvements.",
+        "Recommended improvements to playbooks and procedures.",
       ],
     },
     {
@@ -163,12 +167,12 @@ const data: ResumeData = {
     {
       icon: "lucide:trophy",
       title: "Google Cloud Security MSSP of the Year (EMEA)",
-      desc: "2026 Google Cloud Partner Award recognizing Beyond's excellence in migrating and modernizing security operations into a Google-centric Agentic SOC.",
+      desc: "2026 Google Cloud Partner Award for Beyond's Google-centric agentic SOC.",
     },
     {
       icon: "lucide:award",
       title: "GIAC Advisory Board",
-      desc: "Invited membership — top-percentile performance across GIAC examinations.",
+      desc: "Invited membership for top-percentile performance across GIAC exams.",
     },
   ],
   education: [

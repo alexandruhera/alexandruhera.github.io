@@ -26,3 +26,6 @@ src/pages/lab/
 SETUP.md
 DEVPLAN.md
 docs-internal/
+
+# Generated resume PDF exports — local artifacts, regenerated on demand
+public/resume/

@@ -6,7 +6,7 @@ import Mark from "./Mark.astro";
 
 interface Props {
   wordmark: [string, string]; // [plain, accent]
-  tagline: string;
+  tagline?: string;
 }
 const { wordmark, tagline } = Astro.props;
 ---
@@ -16,8 +16,14 @@ const { wordmark, tagline } = Astro.props;
     <div class="ph-content">
       <Mark class="ph-mark" />
       <b class="ph-wordmark">{wordmark[0]}<span class="ph-accent">{wordmark[1]}</span></b>
-      <span class="ph-sep">·</span>
-      <span class="ph-tagline">{tagline}</span>
+      {
+        tagline && (
+          <>
+            <span class="ph-sep">·</span>
+            <span class="ph-tagline">{tagline}</span>
+          </>
+        )
+      }
     </div>
   </div>
 </div>

@@ -5,7 +5,6 @@
 // /resume and the local-only resume-lab pages both render through this.
 import Base from "../layouts/Base.astro";
 import PrintLetterhead from "./PrintLetterhead.astro";
-import PrintFooter from "./PrintFooter.astro";
 import { Icon } from "astro-icon/components";
 
 export interface ResumeData {
@@ -13,6 +12,7 @@ export interface ResumeData {
   brand: { wordmark: [string, string]; tagline: string };
   name: string;
   lead: string;
+  location?: string;
   /** Set false to hide the Print button (e.g. while the print layout is being reworked). */
   printButton?: boolean;
   contact: { label: string; href?: string; icon?: string }[];
@@ -46,16 +46,33 @@ const skills =
 
 <Base title={data.meta.title} description={data.meta.description}>
   <table class="rtable">
+    {/* thead/tfoot carry only slim dark spacer bands: they repeat on every
+        page to paint the top/bottom margins (the page has margin:0 so the
+        background stays full-bleed dark instead of showing grey margin boxes).
+        The letterhead lives in the tbody now, so it appears on page 1 only. */}
     <thead class="rthead"><tr><td>
-      <PrintLetterhead wordmark={data.brand.wordmark} tagline={data.brand.tagline} />
+      <div class="print-topspace" aria-hidden="true"></div>
     </td></tr></thead>
     <tbody class="rtbody"><tr><td>
+      <div class="rletterhead" aria-hidden="true">
+        <PrintLetterhead wordmark={data.brand.wordmark} tagline={data.brand.tagline} />
+      </div>
       <div class="resume-head">
         <div>
           <p class="eyebrow">resume</p>
           <h1>{data.name}</h1>
-          <p class="lead">{data.lead}</p>
+          {data.lead && <p class="lead">{data.lead}</p>}
           <ul class="contact-links">
+            {
+              data.location && (
+                <li>
+                  <span>
+                    <Icon name="lucide:map-pin" />
+                    {data.location}
+                  </span>
+                </li>
+              )
+            }
             {
               data.contact.map((c) => (
                 <li>
@@ -103,7 +120,6 @@ const skills =
                   <p class="stop-meta">
                     <span class="co">{r.company}</span>
                     <span class="when">{r.period}</span>
-                    {r.current && <span class="now">NOW</span>}
                   </p>
                 </div>
                 <ul>
@@ -216,7 +232,7 @@ const skills =
       </section>
     </td></tr></tbody>
     <tfoot class="rtfoot"><tr><td>
-      <PrintFooter items={data.contact} />
+      <div class="print-botspace" aria-hidden="true"></div>
     </td></tr></tfoot>
   </table>
 
@@ -558,6 +574,10 @@ const skills =
     grid-template-columns: auto 1fr;
     column-gap: 0.75rem;
     row-gap: 0.1rem;
+    /* cards stretch to equal height in the achievements grid; keep the text
+       packed at the top so the title lines up with the icon instead of
+       floating to the card's vertical center */
+    align-content: start;
     padding: 0.75rem 0.85rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -595,7 +615,7 @@ const skills =
 
   .ach strong {
     grid-column: 2;
-    align-self: center;
+    align-self: start;
     font-size: 0.9rem;
   }
 
@@ -672,6 +692,11 @@ const skills =
   /* print-only skills section */
   .skills-print { display: none; }
 
+  /* print-only spacer bands + page-1 letterhead (all hidden on screen) */
+  .print-topspace,
+  .print-botspace,
+  .rletterhead { display: none; }
+
   /* --- print: the SAME design — full color, follows theme ---
      The letterhead repeats on every page via table-header-group (main becomes
      display:table below), so @page only needs normal page margins. */
@@ -729,12 +754,25 @@ const skills =
        full-bleed and inset their own content by the same amount (1.6cm) */
     .rtbody td { padding: 0 1.6cm; }
 
+    /* thead/tfoot spacers: repeat on every page to paint the top/bottom page
+       margins as full-bleed dark bg (page margin is 0, so no grey margin box).
+       Their height IS the page margin above/below the body content. */
+    .print-topspace { display: block; height: 1.1cm; background: var(--bg); }
+    .print-botspace { display: block; height: 1.05cm; background: var(--bg); }
+
+    /* letterhead now flows as page-1 content (not a repeating band), so it sits
+       inside the tbody cell's 1.6cm side padding — drop the band's own side
+       inset and the former top-margin padding (the topspace spacer supplies it).
+       Result: the wordmark + brand rule show on page 1 only. */
+    .rletterhead { display: block; }
+    .rletterhead :global(.ph-band) { padding: 0.1cm 0 0.5cm; }
+
     /* keep each section together — a section moves whole to the next page
        rather than splitting across the break (Certs, Achievements, etc.) */
     .rsec {
       break-inside: avoid;
-      margin-top: 1.1rem;
-      padding-top: 0.9rem;
+      margin-top: 0.6rem;
+      padding-top: 0.45rem;
       border-top: 1px solid var(--border);
     }
     /* Experience can exceed a page — let it flow (role cards stay intact via
@@ -744,17 +782,17 @@ const skills =
     .sep { display: none; }
 
     /* the letterhead band already carries the name — drop the on-screen
-       eyebrow AND the name h1 in print */
+       eyebrow AND the name h1 in print, but keep the contact links (with
+       icons) and location as the page-1 contact block */
     .resume-head .eyebrow,
-    .resume-head h1,
-    .contact-links { display: none; }
+    .resume-head h1 { display: none; }
     .cert-hint { display: none; }
     /* skills are a hover feature on web — in print they get their own section */
     .badge-reveal { display: none; }
 
     .skills-print { display: block; }
 
-    .skills-print h2 { margin-bottom: 0.5rem; }
+    .skills-print h2 { margin-bottom: 0.3rem; }
 
     /* compact the credentials so pages stay dense */
     .badge-main { min-height: 3.1rem; padding: 0.4rem 0.65rem; }
@@ -771,7 +809,7 @@ const skills =
       grid-template-columns: 11rem 1fr;
       gap: 0.9rem;
       align-items: baseline;
-      padding: 0.35rem 0;
+      padding: 0.18rem 0;
       margin: 0;
       border-top: 1px solid var(--border);
     }
@@ -787,11 +825,23 @@ const skills =
     .skill-list {
       font-size: 0.8rem;
       color: var(--fg-muted);
-      line-height: 1.5;
+      line-height: 1.4;
     }
     .lead { margin: 0; }
     :global(h2) { margin-top: 1.2rem; break-after: avoid; }
     .spine { padding-top: 0.1rem; margin-top: 0.7rem; }
+    /* The grey trail used to overshoot the last card and flow onto the next
+       page: it was one absolutely-positioned ::before spanning the whole <ol>,
+       and that box fragments unreliably across a page break. In print, draw the
+       line as an <ol> background instead — backgrounds fragment cleanly per page
+       and end exactly at the element's content box. Zeroing the last card's
+       margin (retained here because the print tbody is a table-cell / BFC) makes
+       that content box end flush with the last experience rectangle. */
+    .spine .stop:last-child { margin-bottom: 0; }
+    .spine::before { display: none; }
+    .spine {
+      background: linear-gradient(var(--border), var(--border)) 0 0 / 2px 100% no-repeat;
+    }
     .stop { padding-bottom: 0.9rem; }
     .stop ul { line-height: 1.4; }
     .stop ul li { margin-bottom: 0.1rem; }
