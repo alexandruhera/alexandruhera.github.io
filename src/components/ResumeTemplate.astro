@@ -62,35 +62,35 @@ const skills =
           <p class="eyebrow">resume</p>
           <h1>{data.name}</h1>
           {data.lead && <p class="lead">{data.lead}</p>}
-          <ul class="contact-links">
-            {
-              data.location && (
-                <li>
-                  <span>
-                    <Icon name="lucide:map-pin" />
-                    {data.location}
-                  </span>
-                </li>
-              )
-            }
-            {
-              data.contact.map((c) => (
-                <li>
-                  {c.href ? (
-                    <a href={c.href}>
-                      {c.icon && <Icon name={c.icon} />}
-                      {c.label}
-                    </a>
-                  ) : (
+          {
+            (data.location || data.contact.length > 0) && (
+              <ul class="contact-links">
+                {data.location && (
+                  <li>
                     <span>
-                      {c.icon && <Icon name={c.icon} />}
-                      {c.label}
+                      <Icon name="lucide:map-pin" />
+                      {data.location}
                     </span>
-                  )}
-                </li>
-              ))
-            }
-          </ul>
+                  </li>
+                )}
+                {data.contact.map((c) => (
+                  <li>
+                    {c.href ? (
+                      <a href={c.href}>
+                        {c.icon && <Icon name={c.icon} />}
+                        {c.label}
+                      </a>
+                    ) : (
+                      <span>
+                        {c.icon && <Icon name={c.icon} />}
+                        {c.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
         </div>
         <div class="head-actions">
           {

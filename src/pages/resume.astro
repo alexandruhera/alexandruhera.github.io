@@ -2,6 +2,14 @@
 import ResumeTemplate from "../components/ResumeTemplate.astro";
 import type { ResumeData } from "../components/ResumeTemplate.astro";
 
+// dev vs prod boundary: the header contact block (location, phone, email,
+// github, linkedin) is personal detail that belongs only in the PDF export,
+// which is generated locally under `astro dev`. The published build
+// (import.meta.env.DEV === false) drops it — the header keeps just the name,
+// role eyebrow, and the Contact button (→ /contact/). GitHub + LinkedIn still
+// live in the site footer.
+const isDev = import.meta.env.DEV;
+
 const data: ResumeData = {
   meta: {
     title: "Resume",
@@ -11,17 +19,19 @@ const data: ResumeData = {
   brand: { wordmark: ["alexandru", "hera"], tagline: "" },
   name: "Alexandru Hera",
   lead: "",
-  location: "Bucharest, Romania, 011354",
+  location: isDev ? "Bucharest, Romania, 011354" : undefined,
   // Print button is a local-only tool for regenerating the PDF exports; the
   // live site ships without it (import.meta.env.DEV is false in the build).
-  printButton: import.meta.env.DEV,
-  contact: [
-    { icon: "lucide:phone", label: "+40 721 812 347", href: "tel:+40721812347" },
-    { icon: "lucide:mail", label: "contact@alexandruhera.com", href: "mailto:contact@alexandruhera.com" },
-    { icon: "lucide:globe", label: "alexandruhera.com", href: "https://alexandruhera.com" },
-    { icon: "lucide:github", label: "github", href: "https://github.com/alexandruhera" },
-    { icon: "lucide:linkedin", label: "linkedin", href: "https://www.linkedin.com/in/alexandruhera" },
-  ],
+  printButton: isDev,
+  contact: isDev
+    ? [
+        { icon: "lucide:phone", label: "+40 721 812 347", href: "tel:+40721812347" },
+        { icon: "lucide:mail", label: "contact@alexandruhera.com", href: "mailto:contact@alexandruhera.com" },
+        { icon: "lucide:globe", label: "alexandruhera.com", href: "https://alexandruhera.com" },
+        { icon: "lucide:github", label: "github", href: "https://github.com/alexandruhera" },
+        { icon: "lucide:linkedin", label: "linkedin", href: "https://www.linkedin.com/in/alexandruhera" },
+      ]
+    : [],
   experience: [
     {
       period: "Jul 2025 — Present",
