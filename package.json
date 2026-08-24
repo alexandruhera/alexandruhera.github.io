@@ -21,7 +21,7 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.118",
     "astro-icon": "^1.1.5",
-    "playwright": "^1.61.1",
+    "playwright": "^1.62.1",
     "wrangler": "^4.123.0"
   }
 }
