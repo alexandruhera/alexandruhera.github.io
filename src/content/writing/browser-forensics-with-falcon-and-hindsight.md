@@ -1,32 +1,14 @@
 ---
 title: "Browser forensics with Falcon Fusion and Hindsight"
 date: 2026-11-28
-description: "How I wired Hindsight into CrowdStrike Falcon Fusion and made collection wait for a verified archive."
+description: "A walkthrough of the PowerShell stages behind browser profile discovery, UTC report naming, and ZIP collection."
 ---
 
-In an incident, browser artifacts can help put a user's activity in order. Getting a usable report from an endpoint takes several steps, though. You have to find the right profile, run the parser, and retrieve the results. I built a Falcon Fusion workflow to make those steps repeatable on Windows using CrowdStrike Real Time Response (RTR) and Hindsight.
+Browser artifacts can help put an incident in order. I built this workflow to run Hindsight against the interactive Windows user's browser profiles and package the reports for retrieval through CrowdStrike Falcon RTR. The examples below follow the linked script revision and use a fictional sensor, hostname, and run time.
 
-The part that needed the most care was deciding when collection was actually complete. A parser can create an output file before it finishes writing it. If the workflow sees that file and archives it immediately, the analyst can receive a ZIP that looks plausible and contains incomplete data.
+## What the operator configures
 
-## Prepare, process, collect
-
-An analyst chooses a Falcon sensor, a browser, and a report format. The workflow supports Chrome, Edge, and Brave, with XLSX, JSONL, and SQLite output.
-
-1. **Prepare.** Start with a dedicated working directory. Preparation deletes the directory and its contents if it already exists, then recreates it empty. That keeps a previous run's files out of the next archive. Sequential runs can reuse the directory. Overlapping runs on the same endpoint need separate paths.
-2. **Process.** After RTR stages Hindsight, the processing script resolves the interactive Windows user's local profile and launches a parser process for each matching browser profile. It records the process ID, start time, and expected report path. Fusion can begin polling while those processes run.
-3. **Collect.** Each poll checks that the process records match the expected reports, that the recorded processes have exited, and that the reports exist and are non-empty. The script checks the temporary ZIP's entries and sizes before moving it into place and returning its path.
-
-Once collection returns a verified ZIP path, Fusion can retrieve it with RTR Get File. If the polling window expires, the workflow should report a timeout and skip retrieval.
-
-## What gets auto-detected
-
-The analyst picks the browser in Fusion. On the endpoint, the script uses Windows CIM to identify the signed-in user because the RTR action runs under a separate account. It matches that username to the final folder name of a local Windows profile and requires exactly one match. It then opens the selected browser’s standard User Data directory under that profile.
-
-For Chrome, that is `AppData\Local\Google\Chrome\User Data`. Edge and Brave use their own standard paths. If the directory contains `Default` and `Profile 1`, the script launches Hindsight once for each. The current discovery rules cover `Default` and numbered `Profile` folders for the interactive user. A missing interactive user, an ambiguous Windows profile, or no matching browser profile returns an error to Fusion. Additional Windows users and custom browser data paths are outside that discovery scope.
-
-## A sample Falcon configuration
-
-Here is an illustrative trigger payload for a Chrome collection on a test sensor. The sensor ID is a placeholder.
+The trigger schema requires `deviceID`, `selected_browser`, and `output_format`. It declares Google Chrome and XLSX as defaults. It also accepts Microsoft Edge and Brave, and the `jsonl` and `sqlite` formats. These are the fields sent to the trigger. [Trigger schema](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/schemas/trigger-input.schema.json)
 
 ```json
 {
@@ -36,39 +18,49 @@ Here is an illustrative trigger payload for a Chrome collection on a test sensor
 }
 ```
 
-Fusion resolves the hostname from the sensor and supplies a dedicated working path, such as `C:\Hindsight\Run-042`. Prepare returns the path that RTR uses for staging and that the later actions use for collection and cleanup. Processing receives the staged executable path, browser, format, and hostname. Collection receives the same working path, browser, and hostname, plus the expected report paths and run timestamp from Processing.
+**Prepare** receives `forensic_analysis_path`. It rejects an empty path or a filesystem root. If the supplied path exists, it deletes it recursively, including its contents, then creates the directory and returns the supplied path. **Process** receives that path, the staged executable path as `forensic_tool_path`, the hostname as `system_hostname`, and the browser and format from the trigger. **Collect** receives the directory, hostname, and browser, plus `forensic_results` and `analysis_timestamp` from Process. The scripts return `has_processing_errors` and include `exception_messages` on failure. [Prepare](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/prepare.ps1) · [Process](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/process.ps1) · [Collect](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/collect.ps1)
 
-| Format | When I would use it |
-| --- | --- |
-| XLSX | Review the timeline in a spreadsheet. |
-| JSONL | Feed records into a scripted analysis pipeline. |
-| SQLite | Query the results locally with SQL. |
+## How profile discovery works
 
-The published Fusion example uses up to 15 attempts and 15 minutes. That limit belongs to Fusion. Each collector invocation performs one check and returns. If Slack is configured, launch and collection outcomes can be sent to the designated channel.
+PowerShell reads `Win32_ComputerSystem.UserName` and removes the domain prefix. It checks `Win32_UserProfile` for a local profile whose folder name matches that username and requires exactly one match. From that profile, it appends the path associated with the browser selected in Fusion.
 
-## Read the filenames in UTC
+The configured paths are relative to the Windows profile directory.
 
-The processing script takes a UTC timestamp once, before launching the parser processes, using `yyyy-MM-ddTHH-mm-ss-fff`. It separately passes `-t UTC` to Hindsight so the report’s rendered timeline uses UTC too. The filename timestamp identifies processing time. Events inside the report retain their own timestamps. Keeping both on the same time basis makes it easier to compare the report with Falcon events or other logs.
+```text
+Google Chrome
+AppData\Local\Google\Chrome\User Data
 
-For hostname `WIN-DFIR-042`, Chrome, and a launch at 14:32:09.417 UTC, the endpoint would see names like these:
+Microsoft Edge
+AppData\Local\Microsoft\Edge\User Data
+
+Brave
+AppData\Local\BraveSoftware\Brave-Browser\User Data
+```
+
+The script enumerates immediate child directories and matches `Default` or `Profile` followed by a whitespace character and one or more digits, such as `Profile 1`. It starts one Hindsight process per match and returns the profile names, their paths, and the expected result paths. [Process script](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/process.ps1)
+
+There are two decisions here. The PowerShell script chooses the directory from the operator's browser selection. It then passes Hindsight `-i` for that profile path, `-o` for the output base, `-f` for the format, and `-t UTC` for the output timezone. It supplies no browser override. The linked upstream CLI revision documents that omitting the override lets Hindsight detect the browser from the profile's files. That behavior is documented for the linked upstream revision. Check the staged binary's version when validating it. [Process script](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/process.ps1) · [Hindsight CLI source](https://github.com/obsidianforensics/hindsight/blob/45ab943668ca763d402d3015851e86927b18d463/hindsight.py#L76-L104)
+
+## How the filenames are built
+
+Before starting Hindsight, Process takes the current UTC time once and formats it as `yyyy-MM-ddTHH-mm-ss-fff`. All profiles in that invocation share the same timestamp. Whitespace in browser and profile names becomes hyphens. The hostname is carried through as supplied. For a Chrome run on `WIN-DFIR-042` with `Default` and `Profile 1`, the expected reports look like this.
 
 ```text
 WIN-DFIR-042-Google-Chrome-Default-2026-11-28T14-32-09-417.xlsx
 WIN-DFIR-042-Google-Chrome-Profile-1-2026-11-28T14-32-09-417.xlsx
+```
+
+The ZIP name uses the same hostname, browser, and timestamp. The process manifest uses the timestamp alone after its `hindsight-` prefix. The collector puts the expected reports in the ZIP and keeps the process manifest outside it. [Process script](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/process.ps1) · [Collection script](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/collect.ps1)
+
+```text
 WIN-DFIR-042-Google-Chrome-2026-11-28T14-32-09-417.zip
 hindsight-2026-11-28T14-32-09-417.json
 ```
 
-Each report carries the hostname, browser, profile, and timestamp. Spaces in browser and profile names become hyphens. The ZIP covers every matching profile, so its name omits the profile. The JSON file stays in the working directory for the collector’s process checks. For case records, pair the archive name with the Falcon sensor ID and Fusion run ID, since the filename alone does not uniquely identify a sensor or record who collected it.
+In this example, the filename marks the processing invocation at 14:32:09.417 UTC. Hindsight's separate `-t UTC` argument selects the display timezone for the artifact timestamps in its output. That lets an analyst identify the run from the filename and read the artifact timeline in UTC. [Hindsight CLI source](https://github.com/obsidianforensics/hindsight/blob/45ab943668ca763d402d3015851e86927b18d463/hindsight.py#L99-L104)
 
-## What the ZIP check actually proves
+## What collection verifies
 
-The revised collector can tell whether the expected files made it into the archive at the expected sizes. Its view of Hindsight is more limited. After the launch action returns, the collector can observe whether a recorded process is still running, but it cannot read that process's eventual exit code. Opening the reports and checking their contents is still part of validating the workflow.
+Each call to Collect makes one attempt. It checks that the manifest and expected report paths agree. If a live process matches both the recorded process ID and start time, the script returns a processing error for that attempt. Once the expected reports exist and are non-empty, Collect builds a temporary ZIP, checks the number of entries, their names, and their uncompressed sizes, then moves the archive to its final path. Its success response includes `zip_file_path`. Fusion owns the retry schedule and the separate retrieval action. [Collection script](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/scripts/collect.ps1)
 
-That distinction matters when an analyst sees a green status in Fusion. A successful collection means the archive passed the collector's checks. A successful retrieval means RTR made it available. Each status tells you where to look when something is missing.
-
-## What I tested
-
-The PowerShell regression checks cover a populated working directory, missing profiles, launch errors, a process that's still running, and compression failures. Those checks passed locally. The deployed workflow still needs an end-to-end Windows test to confirm how Fusion handles retrieval, timeouts, and cleanup.
-
-The repository includes the three scripts, their JSON schemas, and a first-run checklist for Falcon. [Hindsight workflow source and setup guide](https://github.com/alexandruhera/crowdstrike-hindsight-soar/tree/eeabea24ea12ee26defd47e2f325b03b84f59456)
+The archive checks verify that the expected files were packaged. The collector has no exit code for a Hindsight process that finished after the launch action returned. The local PowerShell regression suite covers directory reset, profile and launch failures, live-process detection, and ZIP creation failures. Retrieval, timeout, and cleanup still need an end-to-end run in Falcon on Windows. [Regression checks](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/tests/reliability.ps1) · [Falcon setup guide](https://github.com/alexandruhera/crowdstrike-hindsight-soar/blob/eeabea24ea12ee26defd47e2f325b03b84f59456/docs/setup.md)
